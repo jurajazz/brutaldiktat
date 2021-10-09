@@ -73,6 +73,12 @@ data:
     - veta: S epifytickými feministickými fytofyziologickými idiomatickými a idylickými indíciami infiltrovanymi inkvizíciami plných kriminalisticko lyrickoepickými minimalisticky nihilistických polyteických výrastkov sme sa stretli pri odovzdávaní výhier víťazom.
     - veta: Pozitivistických pribylinských výherných víťazov privítali vybraní religionickí psychiatrickí vodcovia so syfilitickou diagnózou.
     - veta: Synonymom utilitaristických vidlicovitých štylistických špriritistických polyteických vidín sa stávajú všetky súčasné antidiskriminacné a kriminalistické a idylické diela.
+    - veta: Akýsi pekný pes prišiel do miestnosti, kde boli akýsi pekní ps[iy].
+    - veta: Belosi, dámy a kadejakí ps[iy] čakali na štósy, zmesi, autobusy, husi, čipsy a nové časy.
+    - veta: Kartári zahrali v hre štyri falšy, ale pozorovateľ videl len dva falšy.
+    - veta: Brúsič obrúsi obrusy s ktorýmisi šminkami a šmykľavými šmirgľami.
+    - veta: Ťulpasi, dámy a zmesi sa zamysleli v Karlovej Vsi.
+    - veta: Cyril a Cyprián s bicími videli v mikroskopoch veľa cýst ktoré vyzerali ako obrúsené erytrocytovými a salicylovými leukocytmi.
   pomoc: # Pomocné otázky
     - makro-otazky: # (- m:) Makro otázky, ktoré sa vyskytujú pri rôznych slovách. Kazde sa sklada s konkretnych-otazok
       - makro-predpona-vy: # zoznam otazok pre predponu vy
@@ -245,4 +251,7 @@ data:
     - slovo: systémy
     - slovo: enzímy
     - slovo: extrémy
-    
+    # ipsilon po makkej spoluhlaske
+    - slovo: bruchabôľy
+
+
