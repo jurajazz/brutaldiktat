@@ -47,7 +47,7 @@ data:
     # zdroj: https://www.facebook.com/slovencinakorektury/posts/828095090891280/
     - veta: Takíto ps[yi] a akísi vlci sa kedykoľvek pobijú s akýmsimi vtákmi o akýkoľvek koštiaľ a akíkoľvek okoloidúci ľudia im budú hádzať akýkoľvek ohryzok.
     - veta: Výrobný šmirgeľ v závite v bezšvíkovom výťahu konštruktívne vibruje na výborných nitovaných linkových systémoch s kvílivými zvukmi.
-    - veta: Tri ps[yi] zakikirikali a štyria ps[yi] hrýzli rôzne provokatívne typy tisov v skrini ukryté dilinom.
+    - veta: Tri ps[yi] zakikiríkali a štyria ps[yi] hrýzli rôzne provokatívne typy tisov v skrini ukryté dilinom.
     - veta: Algoritmus s rytmom presne ako kryštál sa relatívne rýmujú s priezračne krištáľovým úryvkom matkinej kisne.
     - veta: Ryža a rizoto s administratívnym nariadením prýštia von z úkrytu v skrini.
     - veta: V Krivej Vsi v príkrom hoteli zavinuli devy dva prikryté keksy s matkinými obrusmi.
@@ -64,7 +64,7 @@ data:
     - veta: Vídať ju len vtedy, keď sa chce vydať.
     - veta: Nevinili ich z vyvíjania vyvýšení nevinných, nedobytných a nevisiacich kyvadiel.
     - veta: Štyridsiatiny bicyklistických združení.
-    - veta: Ostali mi dojmy z ktorych na Bahamy Emy a dámy postavili domy s pojmami. # na temu "mi a ami" sa pise vzdy z makkymi 
+    - veta: Ostali mi dojmy z ktorych na Bahamy Emy a dámy postavili domy s pojmami. # na temu "mi a ami" sa pise vzdy z makkymi
     - veta: Rozhlas je tretí medzi najvýznamnejšími vynálezmi 20. storočia.
     - veta: Tykali sme si s ludmi, ktorym tikali vytipované budiky.
     - inspiracia: v júni som videl dva júny (https://www.kvizy.eu/slovensky-jazyk/tvary-slova/j%C3%BAn)
@@ -77,8 +77,15 @@ data:
     - veta: Belosi, dámy a kadejakí ps[iy] čakali na štósy, zmesi, autobusy, husi, čipsy a nové časy.
     - veta: Kartári zahrali v hre štyri falšy, ale pozorovateľ videl len dva falšy.
     - veta: Brúsič obrúsi obrusy s ktorýmisi šminkami a šmykľavými šmirgľami.
-    - veta: Ťulpasi, dámy a zmesi sa zamysleli v Karlovej Vsi.
+    - veta: Ťulpasi, dámy a zmesi sa zamysleli a zachichotali v Karlovej Vsi.
     - veta: Cyril a Cyprián s bicími videli v mikroskopoch veľa cýst ktoré vyzerali ako obrúsené erytrocytovými a salicylovými leukocytmi.
+    - veta: Idey vykryštalizovali z kysne a zakikiríkali.
+    - veta: S babkinými a borkyninými psami jedli v chichotavom pekingskom kiosku kilá cukinových a kryštaľových cukrov.
+    - veta: S dcérkinými vlkmi, skinhedmi a bezdomovkyňami prišli k architektúram dcérskych spoločností.
+    - veta: Eskimák masochista v skysnutom echinaceovom kimone kvičal do blankytných kisní.
+    - veta: Archív katechizmu a chinínových buchiet zahŕňa aj chirurgičkyne chipsy.
+    - veta: Modrá orchidea dáva schizofreničky do synergických polôh.
+    - veta: Šachista a anarchista sa vyžívajú v psychických ochoreniach.
   pomoc: # Pomocné otázky
     - makro-otazky: # (- m:) Makro otázky, ktoré sa vyskytujú pri rôznych slovách. Kazde sa sklada s konkretnych-otazok
       - makro-predpona-vy: # zoznam otazok pre predponu vy
@@ -253,5 +260,4 @@ data:
     - slovo: extrémy
     # ipsilon po makkej spoluhlaske
     - slovo: bruchabôľy
-
-
+    - slovo: Helsinki
