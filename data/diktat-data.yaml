@@ -60,6 +60,7 @@ data:
     - veta: Omylom dobijem zlý typ bátérie do mobilu.
     - veta: V origináli dobyjem jeho srdce.
     - veta: Dobilo mu srdce.
+    - veta: Nedobytný hrad Likava s tisovými skriňami plných dynamitu a diamantov.
     - veta: Macochine, strigine a kolegynine chirurgičky z gymnázia odišli na strieborných bicykloch.
     - veta: Vídať ju len vtedy, keď sa chce vydať.
     - veta: Nevinili ich z vyvíjania vyvýšení nevinných, nedobytných a nevisiacich kyvadiel.
@@ -86,9 +87,14 @@ data:
     - veta: Archív katechizmu a chinínových buchiet zahŕňa aj chirurgičkyne chipsy.
     - veta: Modrá orchidea dáva schizofreničky do synergických polôh.
     - veta: Šachista a anarchista sa vyžívajú v psychických ochoreniach a anitihistaminikach.
+    - veta: Anarchistický oddiel sa chichotal na chybných architektonickích vyhynulých orchideách v archíve s bronchitickými ukážkami buchiet.
     - veta: Exhibicionista hýbe himalájskym hydrantom pri ohyzdnom hincovom plese a spieva hymnu o hypertenzii, hipoterapii, hypotéze, histamíne a hystérii.
     - veta: Rýľovači grilovali arkryl, brilantne ryli a apokryfne sa borili s rýľmi, darilo sa im, kým neskyprili všetky brázdy a polia nepokorili.
     - veta: Arytmia s rytmom, biorytmom a algoritmom počuli barytón, videli chryzantému, ryšavé embryo, blankytný kameňoryt, hrýzli krištáľovo bielu kryhu, kryptickú krysu, skrytú skriňu. # vynimky po r
+    - veta: Krížový labyrint splýval s nablískavými cystami.
+    - veta: Prileteli sme do Bratislavy a bývali sme v hoteli v Karlovej Vsi.
+    - veta: Z akropoly sme ho brali bez barly a od akvabely sme vypytali akvarely a hovorili o diferenciali.
+    - veta: Byvali sme v hoteli, kde mali dva areály a hovorili sme o akvareli.
   pomoc: # Pomocné otázky
     - makro-otazky: # (- m:) Makro otázky, ktoré sa vyskytujú pri rôznych slovách. Kazde sa sklada s konkretnych-otazok
       - makro-predpona-vy: # zoznam otazok pre predponu vy
