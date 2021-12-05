@@ -1,0 +1,6 @@
+K	kniha	ABC
+K	knižný	ABC
+Z	Zuzkin	ABC
+Z	Zuzkina	ABC
+P	psi	ABC
+P	psy	ABC
