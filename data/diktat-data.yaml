@@ -1,6 +1,6 @@
 data:
   veti:
-    - veta: S kolegyninými synmi sme pri krištáľovom potoku vyzerali visacich, kývajucich sa krivých katkiných a otcových výnimočných okrídlených partizánov.
+    - veta: S kolegyninými synmi sme pri krištáľovom potoku vyzerali visacich, kývajucich sa krivých Katkiných a otcových výnimočných okrídlených partizánov.
       pomoc:
       - slovo: kolegyninými
         1:
@@ -33,9 +33,9 @@ data:
         - m: makro-predpona-vy
         2:
         - m: makro-asi-koncovka
-    - veta: Bežkyne vibrovali so záujemkyňami, maratónkyňami a zuzkinými deťmi.
+    - veta: Bežkyne vibrovali so záujemkyňami, maratónkyňami a Zuzkinými deťmi.
     - veta: S vývinovými a vyvinutými kavyľovými závitnicovo výnimočnými dubmi sa s významnými výmoľmi nevideli vygravírovať samími nevysloviteľnosťami.
-    - veta: Vypýtali si zálohy od matkiných blízkych a zuzkiných záujemkýň.
+    - veta: Vypýtali si zálohy od matkiných blízkych a Zuzkiných záujemkýň.
     - veta: Bavičovi sa pripomenuli krásni chytľaví výnimoční civilní cyklisti, ktorí zapíjali acylpyrin vycibreným cyanovým cicavým cykasom a vycifreným cytotoxicky cirhóznym cimbalom erytrocytové vycizelované cisty.
     - veta: Matky sa nevedomky stretli s otcovymi a matkinymi synovcami, ktorí nylónom nitovali nymfy.
     - veta: Stretli sme sa so starobylými hradmi Bzovík, Divín, Hričov, Likava, Molpír, Nyék, Vígľaš
@@ -184,7 +184,7 @@ data:
     - slovo: kino
     - slovo: kisnička
     - slovo: kisňa
-    - slovo: vtak kivy
+    - slovo: vták kivy
     - slovo: ovocie kivi
     - slovo: kivích
     - slovo: kokila
@@ -216,9 +216,9 @@ data:
     - slovo: zakikiríkať
     - slovo: takíto vid
     - slovo: takíto chlapi
-    - slovo: vidim radiátory
+    - slovo: vidím radiátory
     - slovo: o serveri
-    - slovo: vidim servery
+    - slovo: vidím servery
     - slovo: dva servery
     - slovo: o hoteli
     - slovo: dva hotely
@@ -232,8 +232,8 @@ data:
     - slovo: cylindrické
     - slovo: zvykli
     - slovo: byliny
-    - slovo: vidim valy
-    - slovo: vidim podvaly
+    - slovo: vidím valy
+    - slovo: vidím podvaly
     - slovo: kecy
     - slovo: komplexy
     - slovo: o šmirgli
@@ -265,7 +265,7 @@ data:
     - slovo: dátumy
     - slovo: džemy
     - slovo: systémy
-    - slovo: enzímy
+    - slovo: enzýmy
     - slovo: extrémy
     # ipsilon po makkej spoluhlaske
     - slovo: bruchabôľy
