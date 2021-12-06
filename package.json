@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@pixi/text-html": "^2.0.0",
     "copy-webpack-plugin": "^9.1.0",
     "css-loader": "^6.5.1",
     "file-loader": "^6.2.0",
