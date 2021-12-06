@@ -34,6 +34,7 @@ By default your ipv4 and ipv6 should be used automatically.
 * replace deprecated packages with new
 * game1/README.md
 * Auto scale/align items
+* add tests, since the codebase is expanding
 
 # ADD YOUR NOTES INTO THIS README.
 

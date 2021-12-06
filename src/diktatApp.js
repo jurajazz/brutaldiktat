@@ -1,54 +1,92 @@
 import * as PIXI from 'pixi.js'
+import { HTMLText } from '@pixi/text-html';
+
+import * as STYLES from './styles'
 import "./styles.css"
-import brutalSampleImg from "../assets/brutal-sample-595x417.png"
 import diktatData from "../assets/diktat-data.yaml"
+import { TextButton } from './button'
+import WordListHandler from './wordListHandler'
 
 // Create the application helper and add its render target to the page
-let diktatApp = new PIXI.Application({ width: 640, height: 640 })
+let diktatApp = new PIXI.Application({
+    width: window.innerWidth,
+    height: window.innerHeight,
+    backgroundColor: 0x2c3e50,
+    forceCanvas: true
+});
 
-function addMovingImage(app) {
-    let sprite = PIXI.Sprite.from(brutalSampleImg)
-    sprite.scale.set(0.3, 0.3)
-    sprite.y = 500
+var wordListHandler
 
-    app.stage.addChild(sprite)
-
-    // Add a ticker callback to move the sprite back and forth
-    let elapsed = 0.0
-    app.ticker.add((delta) => {
-        elapsed += delta/2
-        sprite.x = 320.0 + Math.cos(elapsed / 50.0) * 320.0
-    })
+function generateText(text) {
+    const richText = new HTMLText(text, STYLES.words)
+    richText.x = 0
+    richText.y = 0
+    richText.anchor.set(0.5, 0.5)
+    return richText
 }
 
-function addText(app) {
-    // Create the sprite and add it to the stage
-    const style = new PIXI.TextStyle({
-        fontFamily: 'Helvetica',
-        fontSize: 36,
-        fill: ['#ffffff', '#aaaaaa'], // gradient
-        stroke: '#ff9900',
-        strokeThickness: 2,
-        dropShadow: true,
-        dropShadowColor: '#000000',
-        dropShadowBlur: 4,
-        dropShadowAngle: Math.PI / 6,
-        dropShadowDistance: 6,
-        wordWrap: true,
-        wordWrapWidth: 440,
-        lineJoin: 'round',
-    })
-
-    //obj_keys[Math.floor(Math.random() *obj_keys.length)]
-    let selectedWord = diktatData.data.slova[Math.floor(Math.random() * diktatData.data.slova.length)]
-    console.log(selectedWord)
-    const richText = new PIXI.Text(selectedWord.slovo, style)
-    richText.x = 50
-    richText.y = 220
-    app.stage.addChild(richText)
+function pickRandomWord(database) {
+    let selectedWord = database.data.slova[Math.floor(Math.random() * database.data.slova.length)]
+    return selectedWord.slovo
 }
 
-addText(diktatApp)
-addMovingImage(diktatApp)
+
+let gameScreen = new PIXI.Container();
+gameScreen.position.set(300, 300)
+gameScreen.width = 1000
+gameScreen.height = 500
+diktatApp.stage.addChild(gameScreen)
+
+
+let textContainer = new PIXI.Container();
+textContainer.width = 1000
+textContainer.height = 1000
+gameScreen.addChild(textContainer)
+
+let newGameButton = new TextButton("Nová hra",
+    100,
+    40,
+    400,
+    100)
+let iButton = new TextButton("i/í",
+    100,
+    40,
+    375,
+    150)
+
+let yButton = new TextButton("y/ý",
+    100,
+    40,
+    480,
+    150)
+
+newGameButton.on('mousedown', onDown);
+newGameButton.on('touchstart', onDown);
+iButton.on('mousedown', updateCursorPositionOnScreen)
+iButton.on('touchstart', updateCursorPositionOnScreen)
+
+function onDown(eventData) {
+    const wordList = []
+    while (wordList.length < 10) {
+        let word = pickRandomWord(diktatData)
+        if (!wordList.includes(word)) {
+            wordList.push(word)
+        }
+    }
+
+    wordListHandler = new WordListHandler(wordList)
+    updateCursorPositionOnScreen()
+}
+
+function updateCursorPositionOnScreen() {
+    if (!wordListHandler != null) {
+        textContainer.removeChildren()
+        textContainer.addChild(generateText(wordListHandler.moveCursorRight()))
+    }
+}
+
+gameScreen.addChild(newGameButton);
+gameScreen.addChild(iButton)
+gameScreen.addChild(yButton)
 
 export default diktatApp
