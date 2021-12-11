@@ -91,17 +91,19 @@ end
 
 # kontrola slov z diktatu
 puts "Kontrolujem slova..."
-diktat['slova'].each do |slovo_rec|
+diktat['data']['slova'].each do |slovo_rec|
 	slovo = slovo_rec['slovo']
 	KontrolaSlov(slovo)
 end
 
 # kontrola viet z diktatu
 puts "Kontrolujem veti..."
-diktat['veti'].each do |veta_rec|
+diktat['data']['veti'].each do |veta_rec|
 	veta = veta_rec['veta']
 	next if veta.nil? # vinechame prazdni zaznam
 	puts "Kontrolujem vetu -#{veta}-" if @treba_vela_informacii
+	veta_ma_zacat_velkym=false
+	veta_ma_zacat_velkym=true if /^Cyril/.match(veta)
 	veta = veta[0].downcase + veta[1..10000] # zmen prve pismeno z velkeho na male
 	KontrolaSlov(veta)
 end
