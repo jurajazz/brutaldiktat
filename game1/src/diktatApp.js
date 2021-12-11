@@ -3,7 +3,6 @@ import { HTMLText } from '@pixi/text-html';
 
 import * as STYLES from './styles'
 import "./styles.css"
-import brutalSampleImg from "../assets/brutal-sample-595x417.png"
 import diktatData from "../assets/diktat-data.yaml"
 import { TextButton } from './button'
 
