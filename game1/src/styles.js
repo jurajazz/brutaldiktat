@@ -1,5 +1,5 @@
 export const buttonText = {
-    fontFamily: 'Helvetica',
+    fontFamily: 'Arial',
     fontSize: 24,
     fill: 0x8000ff,
     stroke: '#333333',
@@ -7,18 +7,4 @@ export const buttonText = {
     align: 'center'
 }
 
-export const words = {
-    fontFamily: 'Helvetica',
-    fontSize: 24,
-    fill: '#ffffff',
-    dropShadow: true,
-    dropShadowColor: '#000000',
-    dropShadowBlur: 4,
-    dropShadowAngle: Math.PI / 6,
-    dropShadowDistance: 6,
-    wordWrap: true,
-    wordWrapWidth: 440,
-    lineJoin: 'round',
-}
-
-export const buttonBackGround = 0xeeeeee
+export const buttonBackGround = 0xC0C0C0
