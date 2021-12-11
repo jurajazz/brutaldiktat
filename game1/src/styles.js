@@ -1,5 +1,7 @@
+export const fontFamily = 'Encode Sans Condensed'
+
 export const buttonText = {
-    fontFamily: 'Arial',
+    fontFamily: fontFamily,
     fontSize: 24,
     fill: 0x8000ff,
     stroke: '#333333',

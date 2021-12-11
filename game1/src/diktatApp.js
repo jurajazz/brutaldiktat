@@ -8,6 +8,7 @@ import { TextButton } from './button'
 
 var cursor
 var currentCursorIndex = 0
+var is_new_orthography=false
 var wordListJoined = ""
 var wordListChallenge = []
 const KTOREKOLVEK_IY_KRATKE = 'ǒ'
@@ -20,10 +21,10 @@ var elapsed=0 // total elapsed time for animations
 // Create the application helper and add its render target to the page
 let diktatApp = new PIXI.Application({
 	  resizeTo: window,
-		antialias: true, // graphics RoundRectangle
+		antialias: true, // graphics RoundRectangle/drawRoundedRect
     width: window.innerWidth,
     height: window.innerHeight,
-    backgroundColor: 0xd0d0d0,
+    backgroundColor: 0xe0e0e0,
     forceCanvas: true
 });
 
@@ -46,6 +47,30 @@ let textContainer = new PIXI.Container();
 textContainer.position.set(window.innerWidth/2, window.innerHeight*0.5)
 diktatApp.stage.addChild(textContainer)
 
+function showMainLabel()
+{
+	let y = -window.innerHeight/2 + 40
+	const label1 = new PIXI.Text('Brutál Diktát',
+	{ fontFamily : STYLES.fontFamily,
+		fontSize: 80,
+		fill : 0x000000,
+		align : 'center'})
+	label1.y = y
+	label1.x = -label1.width/2 // center
+	gameScreen.addChild(label1);
+
+	var pravopis='Aktuálny pravopis'
+	if (is_new_orthography) pravopis='Nový pravopis (jedno i)'
+	const label2 = new PIXI.Text(pravopis,
+	{ fontFamily : STYLES.fontFamily,
+		fontSize: 30,
+		fill : 0x000000,
+		align : 'center'})
+	label2.y = y+80
+	label2.x = -label2.width/2 // center
+	gameScreen.addChild(label2);
+}
+
 function showButtons()
 {
 	let buttonHeight=40
@@ -62,7 +87,7 @@ function showButtons()
 	    100, buttonHeight,
 	    +120, y)
 	gameScreen.addChild(iButton)
-	gameScreen.addChild(yButton)
+	if (!is_new_orthography) gameScreen.addChild(yButton)
 	gameScreen.addChild(backButton)
 
 	iButton.on('mousedown', buttonIclicked)
@@ -115,6 +140,16 @@ function showCursor()
 	textContainer.addChild(box);
 }
 
+function showBackground()
+{
+	const back = new PIXI.Graphics();
+	back.beginFill(0xffffff);
+	//back.lineStyle(3, 0xffffff, 5);
+	back.drawRoundedRect(-250, -180, 500, 400, 10);
+	back.endFill();
+	textContainer.addChild(back);
+}
+
 showGameScreen()
 
 function showGameScreen()
@@ -122,6 +157,7 @@ function showGameScreen()
 	showNewText()
 	showCursor()
 	showButtons()
+	showMainLabel()
 	cursorGotoCurrentPosition()
 }
 
@@ -198,6 +234,7 @@ function showText()
 {
   elapsed=0;
   textContainer.removeChildren()
+	showBackground()
 	letters=[];
   wordListJoined = wordListChallenge.join(', ')
 	console.log("showText: "+wordListJoined)
@@ -234,12 +271,12 @@ function showText()
 		}
 		const letter = {
 	        sprite: new PIXI.Text(char,
-					{ fontFamily : 'Arial',
+					{ fontFamily : STYLES.fontFamily,
 						fontSize: 24,
 						fill : color,
 						align : 'center'}),
 					sprite2: new PIXI.Text(char_alternative,
-					{ fontFamily : 'Arial',
+					{ fontFamily : STYLES.fontFamily,
 						fontSize: 24,
 						fill : color,
 						align : 'center'}),
