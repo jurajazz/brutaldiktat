@@ -17,8 +17,10 @@ diktat or error "Nepodarilo sa nacitat #{slovnik_file}";
 
 puts "Citam slovnik..."
 slovnik_file='../../data/slovnik.txt';
+slovnik_vinimki_file='../../data/slovnik_vinimki.txt';
 slovnik_file='../../data/slovnik_test.txt' if @je_test_povoleni
 @slovnik = File.read(slovnik_file).split("\n")
+@slovnik += File.read(slovnik_vinimki_file).split("\n")
 puts "Budujem index/hash zo slovniku..."
 @slovnik_hash={}
 @slovnik.each do |slovnik_zaznam|
@@ -104,7 +106,10 @@ diktat['data']['veti'].each do |veta_rec|
 	puts "Kontrolujem vetu -#{veta}-" if @treba_vela_informacii
 	veta_ma_zacat_velkym=false
 	veta_ma_zacat_velkym=true if /^Cyril/.match(veta)
-	veta = veta[0].downcase + veta[1..10000] # zmen prve pismeno z velkeho na male
+	# pridaj dalsie vinimki sem ak sa ma zacinat velkim
+	if !veta_ma_zacat_velkym
+		veta = veta[0].downcase + veta[1..10000] # zmen prve pismeno z velkeho na male
+	end
 	KontrolaSlov(veta)
 end
 
