@@ -1,9 +1,12 @@
 	manželkiným	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/man%C5%BEelkin
+	manželkine	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/man%C5%BEelkin
+	manželkinými	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/man%C5%BEelkin
 	maminkinými	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/maminkin
 	kecy	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/kec, https://jazykovaporadna.sme.sk/q/9345/
 	kolegyninými	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/kolegynin
 	kolegynine	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/kolegynin
 	Zuzkinými	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/Zuzkin
+	Zuzkine	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/Zuzkin
 	závitnicovými	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/z%C3%A1vitnicov%C3%BD
 	Zuzkiných	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/Zuzkin
 	vycibrenými	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/vycibren%C3%BD
@@ -16,6 +19,7 @@
 	Vígľaš
 	Brutál
 	Diktát
+	vyry	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/vyry%C5%A5
 	krivozubí	Mnozne cislo zivotne - ako pekní chlapci
 	nitovaných	https://www.kvizy.eu/slovensky-jazyk/identifikacia-slova?nezname_slovo=nitovan%C3%BD
 	Krivej	názov obce - Kriva Ves
@@ -54,3 +58,4 @@
 	kryštáľových	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/kry%C5%A1t%C3%A1lov%C3%BD
 	kriminalisticko	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/kriminalistick%C3%BD
 	vycizelované	https://www.kvizy.eu/slovensky-jazyk/identifikacia-slova?nezname_slovo=vycizelovan%C3%BD
+	Manželkine	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/manželkin
