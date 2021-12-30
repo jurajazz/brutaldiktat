@@ -653,9 +653,17 @@ function animateLetter(letter)
 		s.angle = angle
 		s2.angle = angle
 		// viditelnost medzi sprite a sprite2
-		let alpha = 0.5+0.5*Math.cos(elapsed / 20.0 + 2.5*letter.index)
-		s.alpha = alpha
-		s2.alpha = 1-alpha
+		if (is_new_orthography)
+		{
+			s.alpha = 0
+			s2.alpha = 1
+		}
+		else
+		{
+			let alpha = 0.5+0.5*Math.cos(elapsed / 20.0 + 2.5*letter.index)
+			s.alpha = alpha
+			s2.alpha = 1-alpha
+		}
 	}
 }
 
