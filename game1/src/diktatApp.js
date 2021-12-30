@@ -28,10 +28,13 @@ let diktatApp = new PIXI.Application({
     forceCanvas: true
 });
 
+// Add the 'keydown' event listener to our document
+document.addEventListener('keydown', onKeyboardKeyDown);
+
 window.onresize = function (event){
     var w = window.innerWidth;
     var h = window.innerHeight;
-		console.log("window.onresize: " + w + "," + h);
+    //console.log("window.onresize: " + w + "," + h);
 }
 
 function pickRandomWord(database) {
@@ -71,18 +74,36 @@ function showMainLabel()
 	gameScreen.addChild(label2);
 }
 
+//Capture the keyboard arrow keys
+function onKeyboardKeyDown(key)
+{
+	const KEY_BACKSPACE = 8
+	const KEY_END = 35
+	const KEY_HOME = 36
+	const KEY_LEFT_ARROW = 37
+	const KEY_UP_ARROW = 38
+	const KEY_RIGHT_ARROW = 39
+	const KEY_DOWN_ARROW = 40
+	if ('I'.charCodeAt(0) == key.keyCode) buttonIclicked();
+	if ('Y'.charCodeAt(0) == key.keyCode) buttonYclicked();
+	if (KEY_BACKSPACE == key.keyCode) buttonLeftClicked();
+	if (KEY_LEFT_ARROW == key.keyCode) buttonLeftClicked();
+	if (KEY_RIGHT_ARROW == key.keyCode) buttonRightClicked();
+
+}
+
+
 function showButtons()
 {
 	let buttonHeight=40
 	let y = window.innerHeight/2-buttonHeight
 	//console.log("showButtons h:"+window.innerHeight)
-	let iButton = new TextButton("i",
-	    -100, buttonHeight,
-	    -120, y)
-
 	let yButton = new TextButton("y",
 	    100, buttonHeight,
-	    0, y)
+	    -120, y)
+      let iButton = new TextButton("i",
+    	    -100, buttonHeight,
+    	    0, y)
 	let backButton = new TextButton("<<",
 	    100, buttonHeight,
 	    +120, y)
@@ -92,7 +113,7 @@ function showButtons()
 
 	iButton.on('mousedown', buttonIclicked)
 	yButton.on('mousedown', buttonYclicked)
-	backButton.on('mousedown', backClicked)
+	backButton.on('mousedown', buttonLeftClicked)
 }
 
 function buttonIclicked()
@@ -106,7 +127,12 @@ function buttonYclicked()
 	cursorGotoNextPosition();
 }
 
-function backClicked()
+function buttonRightClicked()
+{
+	cursorGotoNextPosition();
+}
+
+function buttonLeftClicked()
 {
 	cursorGotoPreviousPosition();
 }
