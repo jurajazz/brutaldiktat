@@ -7,12 +7,21 @@ import diktatData from "../assets/diktat-data.yaml"
 import { TextButton } from './button'
 
 var cursor
+
+// stavovi stroj
 var currentCursorIndex = 0
 var is_new_orthography=false
+const PHASE_INTRO_SCREEN = 1
+const PHASE_ENTERING_LETTERS = 2
+const PHASE_SHOWING_RESULTS = 3
+const PHASE_SHOWING_HIGH_SCORE = 4
+var phase = PHASE_ENTERING_LETTERS
+
 var wordListJoined = ""
 var wordListChallenge = []
 const KTOREKOLVEK_IY_KRATKE = 'ǒ'
 const KTOREKOLVEK_IY_DLHE = 'Ǒ'
+const TESTING_FILL_ALL_I = false
 
 // list of letters
 var letters = []
@@ -50,6 +59,7 @@ let textContainer = new PIXI.Container();
 textContainer.position.set(window.innerWidth/2, window.innerHeight*0.5)
 diktatApp.stage.addChild(textContainer)
 
+var label2=null
 function showMainLabel()
 {
 	let y = -window.innerHeight/2 + 40
@@ -64,7 +74,8 @@ function showMainLabel()
 
 	var pravopis='Aktuálny pravopis'
 	if (is_new_orthography) pravopis='Nový pravopis (jedno i)'
-	const label2 = new PIXI.Text(pravopis,
+	if (label2) gameScreen.removeChild(label2);
+	label2 = new PIXI.Text(pravopis,
 	{ fontFamily : STYLES.fontFamily,
 		fontSize: 30,
 		fill : 0x000000,
@@ -77,6 +88,7 @@ function showMainLabel()
 //Capture the keyboard arrow keys
 function onKeyboardKeyDown(key)
 {
+	// https://css-tricks.com/snippets/javascript/javascript-keycodes/
 	const KEY_BACKSPACE = 8
 	const KEY_END = 35
 	const KEY_HOME = 36
@@ -86,34 +98,49 @@ function onKeyboardKeyDown(key)
 	const KEY_DOWN_ARROW = 40
 	if ('I'.charCodeAt(0) == key.keyCode) buttonIclicked();
 	if ('Y'.charCodeAt(0) == key.keyCode) buttonYclicked();
+	if ('A'.charCodeAt(0) == key.keyCode) buttonSetAllToIClicked();
 	if (KEY_BACKSPACE == key.keyCode) buttonLeftClicked();
 	if (KEY_LEFT_ARROW == key.keyCode) buttonLeftClicked();
 	if (KEY_RIGHT_ARROW == key.keyCode) buttonRightClicked();
 
 }
 
+let yButton = null
+let iButton = null
+let backButton = null
+let buttonNextPhase = null
 
 function showButtons()
 {
 	let buttonHeight=40
 	let y = window.innerHeight/2-buttonHeight
 	//console.log("showButtons h:"+window.innerHeight)
-	let yButton = new TextButton("y",
+	yButton = new TextButton("y",
 	    100, buttonHeight,
 	    -120, y)
-      let iButton = new TextButton("i",
+      iButton = new TextButton("i",
     	    -100, buttonHeight,
     	    0, y)
-	let backButton = new TextButton("<<",
+	backButton = new TextButton("<<",
 	    100, buttonHeight,
 	    +120, y)
+	let y2 = window.innerHeight/2-buttonHeight*2
+	buttonNextPhase = new TextButton("Skúsiť nový pravopis",
+	    400, buttonHeight,
+	    0, y2)
+	gameScreen.addChild(buttonNextPhase)
+	buttonNextPhase.alpha = 0
 	gameScreen.addChild(iButton)
-	if (!is_new_orthography) gameScreen.addChild(yButton)
-	gameScreen.addChild(backButton)
+	if (!is_new_orthography)
+	{
+		gameScreen.addChild(yButton)
+		gameScreen.addChild(backButton)
+	}
 
 	iButton.on('mousedown', buttonIclicked)
 	yButton.on('mousedown', buttonYclicked)
 	backButton.on('mousedown', buttonLeftClicked)
+	buttonNextPhase.on('mousedown', buttonNextPhaseClicked)
 }
 
 function buttonIclicked()
@@ -123,6 +150,11 @@ function buttonIclicked()
 }
 function buttonYclicked()
 {
+	if (is_new_orthography)
+	{
+		buttonIclicked()
+		return
+	}
 	setCurrentPositionChar('y');
 	cursorGotoNextPosition();
 }
@@ -137,13 +169,55 @@ function buttonLeftClicked()
 	cursorGotoPreviousPosition();
 }
 
+function buttonNextPhaseClicked()
+{
+	if (phase == PHASE_SHOWING_RESULTS)
+	{
+		if (is_new_orthography)
+		{
+			// zobrazit high score
+			buttonNextPhase.alpha = 0
+			goPhase(PHASE_SHOWING_HIGH_SCORE)
+		}
+		else
+		{
+			// skusit novy pravopis
+			is_new_orthography = true;
+			buttonNextPhase.alpha = 0
+			goPhase(PHASE_ENTERING_LETTERS)
+		}
+	}
+}
+
+function buttonSetAllToIClicked()
+{
+	cursorGotoFirstPosition();
+	while (!checkIfAllLettersAreFilled())
+	{
+		setCurrentPositionChar('i');
+		cursorGotoNextPosition();
+	}
+}
+
 function setCurrentPositionChar(char)
 {
+	if (phase != PHASE_ENTERING_LETTERS) return
+
 	let letter = getWildcardLetterWithIndex(currentCursorIndex)
 	letter.is_selected=true
 	letter.is_selection_ypsilon=false
 	if (char == 'y')
 		letter.is_selection_ypsilon=true
+	if (checkIfAllLettersAreFilled())
+	{
+		goPhase(PHASE_SHOWING_RESULTS);
+	}
+
+}
+
+function hideCursor()
+{
+	cursor.box.alpha=0
 }
 
 function showCursor()
@@ -164,6 +238,7 @@ function showCursor()
 	box.drawRoundedRect(0, 0, 50, 30, 10);
 	box.endFill();
 	textContainer.addChild(box);
+	box.alpha = 0.5
 }
 
 function showBackground()
@@ -176,7 +251,7 @@ function showBackground()
 	textContainer.addChild(back);
 }
 
-showGameScreen()
+goPhase(PHASE_ENTERING_LETTERS)
 
 function showGameScreen()
 {
@@ -185,6 +260,48 @@ function showGameScreen()
 	showButtons()
 	showMainLabel()
 	cursorGotoCurrentPosition()
+	if (TESTING_FILL_ALL_I) buttonSetAllToIClicked()
+}
+
+function showIntroScreen()
+{
+
+}
+
+function showCorrectnessResults()
+{
+	evaluateCorrectness();
+	// hide buttons
+	yButton.alpha = 0
+	iButton.alpha = 0
+	backButton.alpha = 0
+	// show next button
+	if (is_new_orthography)
+	{
+		// show goto next level
+	}
+	else
+	{
+		// offer new orthograpy button
+		buttonNextPhase.alpha = 1
+	}
+}
+
+function goPhase(new_phase)
+{
+	phase = new_phase
+	switch (phase)
+	{
+		case PHASE_ENTERING_LETTERS:
+			showGameScreen()
+			break;
+		case PHASE_SHOWING_RESULTS:
+			showCorrectnessResults();
+			break;
+		case PHASE_INTRO_SCREEN:
+			showIntroScreen();
+			break;
+	}
 }
 
 // search for letter position on the
@@ -212,6 +329,77 @@ function getWildcardLetterWithIndex(letter_index)
 	return letter_found
 }
 
+// skontroluje, ci su vsetki pismena viplnene
+// ak ano - spusti vihodnotenie
+function checkIfAllLettersAreFilled()
+{
+	var some_undecided_letter_found=0
+	letters.forEach((letter, index) =>
+	{
+		if (!letter.is_wildcard) return
+		if (letter.is_selected) return
+		some_undecided_letter_found = true
+	})
+	return !some_undecided_letter_found;
+}
+
+// funkcia vyhodnoti, ktore pismena su dobre a ktore zle
+function evaluateCorrectness()
+{
+	var some_undecided_letter_found=0
+	letters.forEach((letter, index) =>
+	{
+		var correct=false
+		if (!letter.is_wildcard) return
+		if (!letter.is_selected) return
+		if (letter.can_be_any_iy) correct=true
+		if (letter.is_selection_ypsilon && letter.should_be_ypsilon) correct=true
+		if (!letter.is_selection_ypsilon && !letter.should_be_ypsilon) correct=true
+		if (!letter.is_selection_ypsilon && is_new_orthography) correct=true
+		letter.is_correct = correct
+	})
+	markCorrectLetters()
+}
+
+function addMark(letter, is_correct)
+{
+	var mark = {
+				box: new PIXI.Graphics(),
+				basex: 0,
+				basey: 0,
+				is_correct: is_correct
+			}
+	var box=mark.box;
+	var color = 0xff0000
+	if (is_correct) color = 0x00ff00
+	box.beginFill(color);
+	//box.lineStyle(3, color, 5);
+	var size=15
+	box.drawCircle(letter.sprite.x, letter.sprite.y, size);
+	box.endFill();
+	box.alpha = 0.2
+	if (!is_new_orthography)
+	{
+		if (is_correct)
+			box.alpha = 0.0
+	}
+	letter.mark = mark
+	textContainer.addChild(box);
+}
+
+// oznaci spravne/nespravne zvolene pismena farbami
+// pre aktualni pravopis len cervene, zelene len nanapadne
+// pre novi pravopis len zelene :)
+function markCorrectLetters()
+{
+	hideCursor()
+	letters.forEach((letter, index) =>
+	{
+		if (!letter.is_wildcard) return
+		addMark(letter, letter.is_correct)
+	})
+}
+
 function startCursorMove(targetx,targety)
 {
 	var c=cursor
@@ -220,6 +408,12 @@ function startCursorMove(targetx,targety)
 	c.sourcex = c.basex
 	c.sourcey = c.basey
 	c.phase = 0
+}
+
+function cursorGotoFirstPosition()
+{
+	currentCursorIndex=0
+	cursorGotoCurrentPosition()
 }
 
 function cursorGotoNextPosition()
@@ -276,9 +470,12 @@ function showText()
 	{
 		var char=wordListJoined[i];
 		var char_alternative='i';
+		var should_be_ypsilon=false;
+		var can_be_any_iy=false;
 		var is_wildcard=false;
 		var color = 0x606060;
 		var is_long=false;
+		if (char=='y' || char=='ý') should_be_ypsilon = true;
 		if (char=='i' || char=='y' || char==KTOREKOLVEK_IY_KRATKE)
 		{
 			is_wildcard=true;
@@ -295,6 +492,7 @@ function showText()
 			char='y';
 			if (is_long) char='ý';
 		}
+		if (char==KTOREKOLVEK_IY_KRATKE || char==KTOREKOLVEK_IY_DLHE) can_be_any_iy = true;
 		const letter = {
 	        sprite: new PIXI.Text(char,
 					{ fontFamily : STYLES.fontFamily,
@@ -310,8 +508,12 @@ function showText()
 					is_wildcard: is_wildcard,
 					is_long: is_long,
 					index: index,
-					is_selected: false,          // true if user select one of letters
+					is_selected: false,          // true ak uzivatel zvolil nejake pismeno i/y
 					is_selection_ypsilon: false,
+					should_be_ypsilon: should_be_ypsilon,
+					can_be_any_iy: can_be_any_iy,
+					is_correct: false, // true ak je visledok spravni
+					mark: null, // graficki simbol pre zobrazenie ne/spravnosti (is_correct)
 	    };
 	    //letter.sprite.anchor.x = 0.5;
 	    //letter.sprite.anchor.y = 0.7;
@@ -376,6 +578,7 @@ function addLettersAnimation()
 			letters.forEach(animateLetter);
 			animateTextContainer();
 			animateCursor();
+			if (PHASE_SHOWING_RESULTS == phase) letters.forEach(animateMark);
 	})
 }
 
@@ -411,7 +614,6 @@ function animateCursor()
 	box.y = cursor.basey-size/2
 	box.width = size
 	box.height = size
-	box.alpha = 0.5
 }
 
 function setLettersPosition(letter)
@@ -454,6 +656,19 @@ function animateLetter(letter)
 		let alpha = 0.5+0.5*Math.cos(elapsed / 20.0 + 2.5*letter.index)
 		s.alpha = alpha
 		s2.alpha = 1-alpha
+	}
+}
+
+function animateMark(letter)
+{
+	var mark = letter.mark
+	if (!mark) return;
+	let alpha = 0.4+0.1*Math.cos(elapsed / 10.0)
+	if (!letter.is_correct)
+	{
+		var s=mark.box
+		s.alpha = alpha
+		//s.scale.set(alpha)
 	}
 }
 
