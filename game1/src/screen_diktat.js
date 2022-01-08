@@ -26,6 +26,7 @@ var ticker = false // true ak uz je antivni
 
 export function initialize(app)
 {
+	if (application) return
 	application = app
 
 	gameScreen = new PIXI.Container();
@@ -37,7 +38,6 @@ export function initialize(app)
 	application.stage.addChild(textContainer)
 }
 
-var label2=null
 function showMainLabel()
 {
 	let y = -window.innerHeight/2 + 40
@@ -52,8 +52,7 @@ function showMainLabel()
 
 	var pravopis='Aktuálny pravopis'
 	if (TEXT.is_new_orthography) pravopis='Nový pravopis (jedno i)'
-	if (label2) gameScreen.removeChild(label2);
-	label2 = new PIXI.Text(pravopis,
+	var label2 = new PIXI.Text(pravopis,
 	{ fontFamily : STYLES.fontFamily,
 		fontSize: 30,
 		fill : 0x000000,
@@ -189,10 +188,11 @@ function showBackground()
 
 export function showGameScreen()
 {
+	gameScreen.removeChildren()
+	showMainLabel()
 	showText()
 	showCursor()
 	showButtons()
-	showMainLabel()
 	cursorGotoCurrentPosition()
 	if (TEXT.TESTING_FILL_ALL_I) buttonSetAllToIClicked()
 }

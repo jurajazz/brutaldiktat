@@ -69,7 +69,7 @@ function showButtons()
 	    400, buttonHeight,
 	    0, y)
 	gameScreen.addChild(buttonWithYpsilon)
-	buttonWithoutYpsilon = new TextButton("bez neho",
+	buttonWithoutYpsilon = new TextButton("alebo bez neho",
 	    400, buttonHeight,
 	    0, y+buttonHeight*1.2)
 	gameScreen.addChild(buttonWithoutYpsilon)
