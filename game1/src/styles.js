@@ -10,3 +10,4 @@ export const buttonText = {
 }
 
 export const buttonBackGround = 0xC0C0C0
+export const colorWildCardLetter = 0x8000ff

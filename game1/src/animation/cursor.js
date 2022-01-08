@@ -12,6 +12,7 @@ export class Cursor
 		this.targetx = 0
 		this.targety = 0
 		this.phase = 0   // 0-1 where transition from source to target
+		this.scale = 1
 
 		var box=this.box;
 		box.beginFill(0xf0c020);
@@ -27,6 +28,10 @@ export class Cursor
 	hide()
 	{
 		this.box.alpha=0
+	}
+	setSize(scale)
+	{
+		this.scale = scale
 	}
 	startMove(targetx,targety)
 	{
@@ -48,7 +53,7 @@ export class Cursor
 			this.phase += 0.1
 		}
 
-		var size = 30+5*Math.cos(elapsed / 10.0)
+		var size = this.scale*30+this.scale*5*Math.cos(elapsed / 10.0)
 		box.x = this.basex-size/2
 		box.y = this.basey-size/2
 		box.width = size

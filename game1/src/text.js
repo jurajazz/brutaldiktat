@@ -1,5 +1,6 @@
 import diktatData from "../assets/diktat-data.yaml"
 import * as LETTER from './animation/letter'
+import * as STYLES from './styles'
 
 export const KTOREKOLVEK_IY_KRATKE = 'ǒ'
 export const KTOREKOLVEK_IY_DLHE = 'Ǒ'
@@ -51,6 +52,7 @@ export function placeLetters(letters)
 	let rightx=200;
 	let basex=leftx;
 	let basey=-line_size_y*max_lines_count/2;
+	let size = 24
 	let index=0;
 	for (let i = 0; i < wordListJoined.length; i++)
 	{
@@ -75,12 +77,12 @@ export function placeLetters(letters)
 		}
 		if (is_wildcard)
 		{
-			color = 0x8000ff;
+			color = STYLES.colorWildCardLetter
 			char='y';
 			if (is_long) char='ý';
 		}
 		if (char==KTOREKOLVEK_IY_KRATKE || char==KTOREKOLVEK_IY_DLHE) can_be_any_iy = true;
-		let letter_object = new LETTER.Letter(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy);
+		let letter_object = new LETTER.Letter(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy,size);
 		//letter_object.spos(basex,basey)
 		letter_object.setPosition(basex,basey)
 		letters.push(letter_object)
