@@ -22,6 +22,8 @@ var textContainer;
 var currentCursorIndex = 0
 var cursor_graphics = null // object of CURSOR.Cursor
 
+var ticker = false // true ak uz je antivni
+
 export function initialize(app)
 {
 	application = app
@@ -354,6 +356,8 @@ function showText()
 	letters=[]
 	TEXT.placeLetters(letters)
 	letters.forEach(addLetterToContainer);
+	// nastav polohu nedefinovanich pismen
+	letters.forEach(setLettersPosition);
 	addAnimations();
 }
 
@@ -368,9 +372,7 @@ function addLetterToContainer(letter)
 
 function addAnimations()
 {
-	// nastav polohu nedefinovanich pismen
-	letters.forEach(setLettersPosition);
-
+	if (ticker) return
 	application.ticker.add((delta) => {
 			elapsed += delta;
 			// pohibuj so zatial nedefinovanimi pismenami
@@ -379,6 +381,7 @@ function addAnimations()
 			if (cursor_graphics) cursor_graphics.animate(elapsed);
 			if (PHASES.PHASE_SHOWING_RESULTS == PHASES.phase) letters.forEach(animateMark);
 	})
+	ticker=true
 }
 
 function setLettersPosition(letter) { letter.initPosition() }
