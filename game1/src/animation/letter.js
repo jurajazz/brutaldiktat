@@ -4,20 +4,20 @@ import * as TEXT from '../text'
 
 export class Letter
 {
-	constructor(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy)
+	constructor(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy,size)
 	{
 		this.structure = {
 			sprite: new PIXI.Text(char,
 			{
 				fontFamily : STYLES.fontFamily,
-				fontSize: 24,
+				fontSize: size,
 				fill : color,
 				align : 'center'
 			}),
 			sprite2: new PIXI.Text(char_alternative,
 			{
 				fontFamily : STYLES.fontFamily,
-				fontSize: 24,
+				fontSize: size,
 				fill : color,
 				align : 'center'
 			}),
@@ -31,7 +31,22 @@ export class Letter
 			can_be_any_iy: can_be_any_iy,
 			is_correct: false, // true ak je visledok spravni
 			mark: null, // graficki simbol pre zobrazenie ne/spravnosti (is_correct)
+			alpha_max: 1, // maximalna alpha
+			alpha_max_selected: 1
 		}
+	}
+	setSelected(set_selected_ypsilon)
+	{
+		this.structure.is_selected = true;
+		this.structure.is_selection_ypsilon = set_selected_ypsilon;
+	}
+	setAlphaMax(alpha)
+	{
+		this.structure.alpha_max = alpha
+	}
+	setAlphaMaxSelected(alpha)
+	{
+		this.structure.alpha_max_selected = alpha
 	}
 	getStructure()
 	{
@@ -58,9 +73,9 @@ export class Letter
 			s.angle = 0
 			s2.angle = 0
 			if (letter.is_selection_ypsilon)
-				s.alpha = 1
+				s.alpha = letter.alpha_max_selected
 			else
-				s2.alpha = 1
+				s2.alpha = letter.alpha_max_selected
 		}
 		else
 		{
@@ -71,13 +86,13 @@ export class Letter
 			if (TEXT.is_new_orthography)
 			{
 				s.alpha = 0
-				s2.alpha = 1
+				s2.alpha = letter.alpha_max
 			}
 			else
 			{
-				let alpha = 0.5+0.5*Math.cos(elapsed / 20.0 + 2.5*letter.index)
+				let alpha = letter.alpha_max*(0.5+0.5*Math.cos(elapsed / 20.0 + 2.5*letter.index))
 				s.alpha = alpha
-				s2.alpha = 1-alpha
+				s2.alpha = letter.alpha_max-alpha
 			}
 		}
 	}
