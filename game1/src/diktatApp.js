@@ -8,11 +8,11 @@ import "./styles.css"
 import { TextButton } from './button'
 
 import * as TEXT from './text'
-
-var cursor
+import * as CURSOR from './animation/cursor'
 
 // stavovi stroj
 var currentCursorIndex = 0
+var cursor_graphics = null // object of CURSOR.Cursor
 var is_new_orthography=false
 const PHASE_INTRO_SCREEN = 1
 const PHASE_ENTERING_LETTERS = 2
@@ -207,30 +207,10 @@ function setCurrentPositionChar(char)
 
 }
 
-function hideCursor()
-{
-	cursor.box.alpha=0
-}
-
 function showCursor()
 {
-	cursor = {
-				box: new PIXI.Graphics(),
-				basex: 0,
-				basey: 0,
-				sourcex: 0,
-				sourcey: 0,
-				targetx: 0,
-				targety: 0,
-				phase: 0,   // 0-1 where transition from source to target
-			}
-	var box=cursor.box;
-	box.beginFill(0xf0c020);
-	box.lineStyle(3, 0xffff00, 5);
-	box.drawRoundedRect(0, 0, 50, 30, 10);
-	box.endFill();
-	textContainer.addChild(box);
-	box.alpha = 0.5
+	cursor_graphics = new CURSOR.Cursor()
+	textContainer.addChild(cursor_graphics.getBox())
 }
 
 function showBackground()
@@ -299,9 +279,9 @@ function goPhase(new_phase)
 // search for letter position on the
 function cursorGotoCurrentPosition()
 {
-	if (cursor==0) return
+	if (cursor_graphics==null) return
 	let letter = getWildcardLetterWithIndex(currentCursorIndex)
-	if (letter!=0) startCursorMove(letter.sprite.x, letter.sprite.y)
+	if (letter!=0) cursor_graphics.startMove(letter.sprite.x, letter.sprite.y)
 }
 
 function getWildcardLetterWithIndex(letter_index)
@@ -384,22 +364,12 @@ function addMark(letter, is_correct)
 // pre novi pravopis len zelene :)
 function markCorrectLetters()
 {
-	hideCursor()
+	cursor_graphics.hide()
 	letters.forEach((letter, index) =>
 	{
 		if (!letter.is_wildcard) return
 		addMark(letter, letter.is_correct)
 	})
-}
-
-function startCursorMove(targetx,targety)
-{
-	var c=cursor
-	c.targetx = targetx
-	c.targety = targety
-	c.sourcex = c.basex
-	c.sourcey = c.basey
-	c.phase = 0
 }
 
 function cursorGotoFirstPosition()
@@ -549,7 +519,7 @@ function addLettersAnimation()
 			// pohibuj so zatial nedefinovanimi pismenami
 			letters.forEach(animateLetter);
 			animateTextContainer();
-			animateCursor();
+			if (cursor_graphics) cursor_graphics.animate(elapsed);
 			if (PHASE_SHOWING_RESULTS == phase) letters.forEach(animateMark);
 	})
 }
@@ -565,27 +535,6 @@ function animateTextContainer()
 	}
 	let scale=1-(max_frames-elapsed)/max_frames*0.1*Math.cos(elapsed / 3.0)
 	textContainer.scale.set(scale,scale)
-}
-
-function animateCursor()
-{
-	if (cursor==0) return
-	var c = cursor
-	var box = c.box
-
-	if (c.phase<1)
-	{
-		// posun kurzor na novu poziciu targetx,targety pocas phase 0-1
-		c.basex = c.sourcex + (c.targetx-c.sourcex)*c.phase
-		c.basey = c.sourcey + (c.targety-c.sourcey)*c.phase
-		c.phase += 0.1
-	}
-
-	var size = 30+5*Math.cos(elapsed / 10.0)
-	box.x = cursor.basex-size/2
-	box.y = cursor.basey-size/2
-	box.width = size
-	box.height = size
 }
 
 function setLettersPosition(letter)
