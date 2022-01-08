@@ -16,14 +16,18 @@ export class TextButton extends PIXI.Container {
             0)
         this.button.anchor.set(0.5, 0.5)
         this.addChild(this.button)
-
-        this.buttonText= new PIXI.Text(
-            text,
-            STYLES.buttonText)
-        this.buttonText.anchor.set(0.5, 0.5)
-        this.addChild(this.buttonText)
+	  this.setText(text)
         this.interactive = true;
     }
+	setText(text)
+	{
+		if (this.buttonText) this.removeChild(this.buttonText)
+		this.buttonText= new PIXI.Text(
+		text,
+		STYLES.buttonText)
+		this.addChild(this.buttonText)
+		this.buttonText.anchor.set(0.5, 0.5)
+	}
 }
 
 export class Button extends PIXI.Sprite {
