@@ -14,7 +14,6 @@ import * as LETTER from './animation/letter'
 // stavovi stroj
 var currentCursorIndex = 0
 var cursor_graphics = null // object of CURSOR.Cursor
-var is_new_orthography=false
 const PHASE_INTRO_SCREEN = 1
 const PHASE_ENTERING_LETTERS = 2
 const PHASE_SHOWING_RESULTS = 3
@@ -66,7 +65,7 @@ function showMainLabel()
 	gameScreen.addChild(label1);
 
 	var pravopis='Aktuálny pravopis'
-	if (is_new_orthography) pravopis='Nový pravopis (jedno i)'
+	if (TEXT.is_new_orthography) pravopis='Nový pravopis (jedno i)'
 	if (label2) gameScreen.removeChild(label2);
 	label2 = new PIXI.Text(pravopis,
 	{ fontFamily : STYLES.fontFamily,
@@ -124,7 +123,7 @@ function showButtons()
 	gameScreen.addChild(buttonNextPhase)
 	buttonNextPhase.alpha = 0
 	gameScreen.addChild(iButton)
-	if (!is_new_orthography)
+	if (!TEXT.is_new_orthography)
 	{
 		gameScreen.addChild(yButton)
 		gameScreen.addChild(backButton)
@@ -143,7 +142,7 @@ function buttonIclicked()
 }
 function buttonYclicked()
 {
-	if (is_new_orthography)
+	if (TEXT.is_new_orthography)
 	{
 		buttonIclicked()
 		return
@@ -166,7 +165,7 @@ function buttonNextPhaseClicked()
 {
 	if (phase == PHASE_SHOWING_RESULTS)
 	{
-		if (is_new_orthography)
+		if (TEXT.is_new_orthography)
 		{
 			// zobrazit high score
 			buttonNextPhase.alpha = 0
@@ -175,7 +174,7 @@ function buttonNextPhaseClicked()
 		else
 		{
 			// skusit novy pravopis
-			is_new_orthography = true;
+			TEXT.setNewOrthography(true)
 			buttonNextPhase.alpha = 0
 			goPhase(PHASE_ENTERING_LETTERS)
 		}
@@ -250,7 +249,7 @@ function showCorrectnessResults()
 	iButton.alpha = 0
 	backButton.alpha = 0
 	// show next button
-	if (is_new_orthography)
+	if (TEXT.is_new_orthography)
 	{
 		// show goto next level
 	}
@@ -335,7 +334,7 @@ function evaluateCorrectness()
 		if (letter.can_be_any_iy) correct=true
 		if (letter.is_selection_ypsilon && letter.should_be_ypsilon) correct=true
 		if (!letter.is_selection_ypsilon && !letter.should_be_ypsilon) correct=true
-		if (!letter.is_selection_ypsilon && is_new_orthography) correct=true
+		if (!letter.is_selection_ypsilon && TEXT.is_new_orthography) correct=true
 		letter.is_correct = correct
 	})
 	markCorrectLetters()
@@ -358,7 +357,7 @@ function addMark(letter, is_correct)
 	box.drawCircle(letter.sprite.x, letter.sprite.y, size);
 	box.endFill();
 	box.alpha = 0.2
-	if (!is_new_orthography)
+	if (!TEXT.is_new_orthography)
 	{
 		if (is_correct)
 			box.alpha = 0.0
@@ -436,7 +435,8 @@ function addAnimations()
 }
 
 function setLettersPosition(letter) { letter.initPosition() }
-function animateLetter(letter) { letter.animate(elapsed,is_new_orthography) }
+function animateLetter(letter) { letter.animate(elapsed) }
+function animateMark(letter) {letter.animateMark(elapsed) }
 
 function animateTextContainer()
 {
@@ -451,17 +451,5 @@ function animateTextContainer()
 	textContainer.scale.set(scale,scale)
 }
 
-function animateMark(letter)
-{
-	var mark = letter.mark
-	if (!mark) return;
-	let alpha = 0.4+0.1*Math.cos(elapsed / 10.0)
-	if (!letter.is_correct)
-	{
-		var s=mark.box
-		s.alpha = alpha
-		//s.scale.set(alpha)
-	}
-}
 
 export default diktatApp

@@ -5,6 +5,13 @@ export const KTOREKOLVEK_IY_KRATKE = 'ǒ'
 export const KTOREKOLVEK_IY_DLHE = 'Ǒ'
 export const TESTING_FILL_ALL_I = false
 
+export var is_new_orthography = false
+
+export function setNewOrthography(is_new)
+{
+	is_new_orthography = is_new
+}
+
 function pickRandomWord(database) {
 	let selectedWord = database.data.slova[Math.floor(Math.random() * database.data.slova.length)]
 	return selectedWord.slovo
