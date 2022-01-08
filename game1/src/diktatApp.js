@@ -401,8 +401,8 @@ function cursorGotoPreviousPosition()
 
 function showText()
 {
-  elapsed=0;
-  textContainer.removeChildren()
+	elapsed=0;
+	textContainer.removeChildren()
 	showBackground()
 	letters=[]
 	currentCursorIndex = 0
@@ -430,6 +430,7 @@ function showText()
 		if (char=='i' || char=='y' || char==TEXT.KTOREKOLVEK_IY_KRATKE)
 		{
 			is_wildcard=true;
+			index++;
 		}
 		if (char=='í' || char=='ý' || char==TEXT.KTOREKOLVEK_IY_DLHE)
 		{
@@ -444,28 +445,12 @@ function showText()
 			if (is_long) char='ý';
 		}
 		if (char==TEXT.KTOREKOLVEK_IY_KRATKE || char==TEXT.KTOREKOLVEK_IY_DLHE) can_be_any_iy = true;
-		const letter_object = new LETTER.Letter(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy);
-		const letter = letter_object.getStructure()
-		//letter.sprite.anchor.x = 0.5;
-		//letter.sprite.anchor.y = 0.7;
-		let s=letter.sprite
-		let s2=letter.sprite2
-		s.x = basex;
-		s2.x = basex;
-		s.y = basey;
-		s2.y = basey;
-		s2.alpha = 0; // neviditelna alternativa
-		textContainer.addChild(s);
-		if (is_wildcard)
-		{
-			textContainer.addChild(letter.sprite2);
-			index++;
-		}
-		//gameScreen.addChild(letter.sprite);
-		//console.log("Pismeno "+i+" zobrazene na "+basex+","+basey);
-		letters.push(letter_object);
+		let letter_object = new LETTER.Letter(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy);
+		//letter_object.spos(basex,basey)
+		letter_object.setPosition(basex,basey)
+		letters.push(letter_object)
 		// generuj poziciu dalsieho pismena
-		basex+=letter.sprite.width
+		basex += letter_object.getWidth()
 		if (basex>rightx)
 		{
 			// prechod na novi riadok
@@ -485,18 +470,23 @@ function showText()
 			for (let j=0;j<pocetPismenNaPresun;j++)
 			{
 				//console.log("Presun pismeno "+letters[id+j].char);
-				let l=letters[id+j].getStructure()
-				let s=l.sprite;
-				let s2=l.sprite2;
-				s.x = basex;
-				s2.x = basex;
-				s.y = basey;
-				s2.y = basey;
-				basex+=s.width;
+				let l=letters[id+j]
+				l.setPosition(basex,basey)
+				basex+=l.getWidth();
 			}
 		}
 	}
+	letters.forEach(addLetterToContainer);
 	addLettersAnimation();
+}
+
+function addLetterToContainer(letter)
+{
+	textContainer.addChild(letter.getStructure().sprite);
+	if (letter.getStructure().is_wildcard)
+	{
+		textContainer.addChild(letter.getStructure().sprite2);
+	}
 }
 
 function addLettersAnimation()
@@ -514,7 +504,7 @@ function addLettersAnimation()
 	})
 }
 
-function setLettersPosition(letter) { letter.setPosition() }
+function setLettersPosition(letter) { letter.initPosition() }
 function animateLetter(letter) { letter.animate(elapsed,is_new_orthography) }
 
 function animateTextContainer()

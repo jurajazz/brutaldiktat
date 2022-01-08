@@ -36,6 +36,14 @@ export class Letter
 	{
 		return this.structure
 	}
+	getWidth()
+	{
+		return this.structure.sprite.width
+	}
+	getHeight()
+	{
+		return this.structure.sprite.height
+	}
 	animate(elapsed,is_new_orthography)
 	{
 		var letter = this.structure
@@ -72,8 +80,19 @@ export class Letter
 			}
 		}
 	}
-	setPosition(letter)
+	setPosition(x,y)
 	{
+		var s=this.structure.sprite
+		var s2=this.structure.sprite2
+		s.x = x;
+		s2.x = x;
+		s.y = y;
+		s2.y = y;
+		s2.alpha = 0; // neviditelna alternativa
+	}
+	initPosition()
+	{
+		// fine tune initial position
 		var letter = this.structure
 		if (!letter.is_wildcard) return
 		let s = letter.sprite
