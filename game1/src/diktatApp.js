@@ -1,10 +1,13 @@
+'use strict';
+
 import * as PIXI from 'pixi.js'
 import { HTMLText } from '@pixi/text-html';
 
 import * as STYLES from './styles'
 import "./styles.css"
-import diktatData from "../assets/diktat-data.yaml"
 import { TextButton } from './button'
+
+import * as TEXT from './text'
 
 var cursor
 
@@ -17,38 +20,27 @@ const PHASE_SHOWING_RESULTS = 3
 const PHASE_SHOWING_HIGH_SCORE = 4
 var phase = PHASE_ENTERING_LETTERS
 
-var wordListJoined = ""
-var wordListChallenge = []
-const KTOREKOLVEK_IY_KRATKE = 'ǒ'
-const KTOREKOLVEK_IY_DLHE = 'Ǒ'
-const TESTING_FILL_ALL_I = false
-
 // list of letters
 var letters = []
 var elapsed=0 // total elapsed time for animations
 
 // Create the application helper and add its render target to the page
 let diktatApp = new PIXI.Application({
-	  resizeTo: window,
-		antialias: true, // graphics RoundRectangle/drawRoundedRect
-    width: window.innerWidth,
-    height: window.innerHeight,
-    backgroundColor: 0xe0e0e0,
-    forceCanvas: true
+	resizeTo: window,
+	antialias: true, // graphics RoundRectangle/drawRoundedRect
+	width: window.innerWidth,
+	height: window.innerHeight,
+	backgroundColor: 0xe0e0e0,
+	forceCanvas: true
 });
 
 // Add the 'keydown' event listener to our document
 document.addEventListener('keydown', onKeyboardKeyDown);
 
 window.onresize = function (event){
-    var w = window.innerWidth;
-    var h = window.innerHeight;
-    //console.log("window.onresize: " + w + "," + h);
-}
-
-function pickRandomWord(database) {
-    let selectedWord = database.data.slova[Math.floor(Math.random() * database.data.slova.length)]
-    return selectedWord.slovo
+	var w = window.innerWidth;
+	var h = window.innerHeight;
+	//console.log("window.onresize: " + w + "," + h);
 }
 
 let gameScreen = new PIXI.Container();
@@ -255,12 +247,12 @@ goPhase(PHASE_ENTERING_LETTERS)
 
 function showGameScreen()
 {
-	showNewText()
+	showText()
 	showCursor()
 	showButtons()
 	showMainLabel()
 	cursorGotoCurrentPosition()
-	if (TESTING_FILL_ALL_I) buttonSetAllToIClicked()
+	if (TEXT.TESTING_FILL_ALL_I) buttonSetAllToIClicked()
 }
 
 function showIntroScreen()
@@ -428,35 +420,15 @@ function cursorGotoPreviousPosition()
 	cursorGotoCurrentPosition()
 }
 
-function showNewText ()
-{
-	// generovanie zoznamu slov
-  const wordList = []
-  while (wordList.length < 20)
-	{
-    let word = pickRandomWord(diktatData)
-    if (!wordList.includes(word)) wordList.push(word)
-	}
-	wordListChallenge=[];
-  wordList.forEach((element, index) =>
-	{
-			  let e=element;
-				e=e.replace(/\[iy\]/g, KTOREKOLVEK_IY_KRATKE);
-				e=e.replace(/\[íý\]/g, KTOREKOLVEK_IY_DLHE);
-        wordListChallenge.push(e)
-  });
-
-  currentCursorIndex = 0
-  showText()
-}
-
 function showText()
 {
   elapsed=0;
   textContainer.removeChildren()
 	showBackground()
-	letters=[];
-  wordListJoined = wordListChallenge.join(', ')
+	letters=[]
+	currentCursorIndex = 0
+	var wordListChallenge = TEXT.generateNewText()
+  	var wordListJoined = wordListChallenge.join(', ')
 	console.log("showText: "+wordListJoined)
 
 	let max_lines_count=8;
@@ -476,11 +448,11 @@ function showText()
 		var color = 0x606060;
 		var is_long=false;
 		if (char=='y' || char=='ý') should_be_ypsilon = true;
-		if (char=='i' || char=='y' || char==KTOREKOLVEK_IY_KRATKE)
+		if (char=='i' || char=='y' || char==TEXT.KTOREKOLVEK_IY_KRATKE)
 		{
 			is_wildcard=true;
 		}
-		if (char=='í' || char=='ý' || char==KTOREKOLVEK_IY_DLHE)
+		if (char=='í' || char=='ý' || char==TEXT.KTOREKOLVEK_IY_DLHE)
 		{
 			is_wildcard=true;
 			is_long=true;
@@ -492,7 +464,7 @@ function showText()
 			char='y';
 			if (is_long) char='ý';
 		}
-		if (char==KTOREKOLVEK_IY_KRATKE || char==KTOREKOLVEK_IY_DLHE) can_be_any_iy = true;
+		if (char==TEXT.KTOREKOLVEK_IY_KRATKE || char==TEXT.KTOREKOLVEK_IY_DLHE) can_be_any_iy = true;
 		const letter = {
 	        sprite: new PIXI.Text(char,
 					{ fontFamily : STYLES.fontFamily,
