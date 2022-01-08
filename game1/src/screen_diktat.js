@@ -89,7 +89,7 @@ function onKeyboardKeyDown(key)
 let yButton = null
 let iButton = null
 let backButton = null
-let buttonNextPhase = null
+export let buttonNextPhase = null
 
 function showButtons()
 {
@@ -121,11 +121,6 @@ function showButtons()
 	iButton.on('mousedown', buttonIclicked)
 	yButton.on('mousedown', buttonYclicked)
 	backButton.on('mousedown', buttonLeftClicked)
-}
-
-export function getButtonNextPhase()
-{
-	return buttonNextPhase;
 }
 
 function buttonIclicked()

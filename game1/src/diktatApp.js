@@ -31,34 +31,41 @@ function goPhase(new_phase)
 	switch (PHASES.phase)
 	{
 		case PHASES.PHASE_INTRO_SCREEN:
-			showIntroScreen();
-			break;
+			SCREEN_INTRO.initialize(diktatApp)
+			SCREEN_INTRO.showScreen()
+			SCREEN_INTRO.buttonWithYpsilon.on('mousedown', buttonStartWithYpsilonClicked)
+			SCREEN_INTRO.buttonWithoutYpsilon.on('mousedown', buttonStartWithoutYpsilonClicked)
+			break
 		case PHASES.PHASE_ENTERING_LETTERS:
+			SCREEN_INTRO.hide()
 			SCREEN_DIKTAT.initialize(diktatApp)
 			SCREEN_DIKTAT.showGameScreen()
-			SCREEN_DIKTAT.getButtonNextPhase().on('mousedown', buttonNextPhaseClicked)
-			break;
+			SCREEN_DIKTAT.buttonNextPhase.on('mousedown', buttonNextPhaseClicked)
+			break
 		case PHASES.PHASE_SHOWING_RESULTS:
-			SCREEN_DIKTAT.showCorrectnessResults();
+			SCREEN_DIKTAT.showCorrectnessResults()
 			if (TEXT.is_new_orthography)
 			{
-				SCREEN_DIKTAT.getButtonNextPhase().setText("Zobraziť vyhodnotenie")
+				SCREEN_DIKTAT.buttonNextPhase.setText("Zobraziť vyhodnotenie")
 			}
 			else
 			{
-				SCREEN_DIKTAT.getButtonNextPhase().setText("Skúsiť nový pravopis")
+				SCREEN_DIKTAT.buttonNextPhase.setText("Skúsiť nový pravopis")
 			}
-			SCREEN_DIKTAT.getButtonNextPhase().alpha = 1
-			break;
+			SCREEN_DIKTAT.buttonNextPhase.alpha = 1
+			break
 		case PHASES.PHASE_SHOWING_HIGH_SCORE:
 			SCREEN_DIKTAT.hide()
-			break;
+			SCREEN_HIGH_SCORE.initialize(diktatApp)
+			SCREEN_HIGH_SCORE.showScreen()
+			break
 	}
 }
 
 // spusti hru
 addPollers()
-goPhase(PHASES.PHASE_ENTERING_LETTERS)
+goPhase(PHASES.PHASE_INTRO_SCREEN)
+//goPhase(PHASES.PHASE_ENTERING_LETTERS)
 
 var app_elapsed_time=0
 function addPollers()
@@ -77,6 +84,18 @@ function addPollers()
 	})
 }
 
+function buttonStartWithYpsilonClicked()
+{
+	TEXT.setNewOrthography(false)
+	goPhase(PHASES.PHASE_ENTERING_LETTERS)
+}
+
+function buttonStartWithoutYpsilonClicked()
+{
+	TEXT.setNewOrthography(true)
+	goPhase(PHASES.PHASE_ENTERING_LETTERS)
+}
+
 function buttonNextPhaseClicked()
 {
 	if (PHASES.phase == PHASES.PHASE_SHOWING_RESULTS)
@@ -84,14 +103,14 @@ function buttonNextPhaseClicked()
 		if (TEXT.is_new_orthography)
 		{
 			// zobrazit high score
-			SCREEN_DIKTAT.getButtonNextPhase().alpha = 0
+			SCREEN_DIKTAT.buttonNextPhase.alpha = 0
 			goPhase(PHASES.PHASE_SHOWING_HIGH_SCORE)
 		}
 		else
 		{
 			// skusit novy pravopis
 			TEXT.setNewOrthography(true)
-			SCREEN_DIKTAT.getButtonNextPhase().alpha = 0
+			SCREEN_DIKTAT.buttonNextPhase.alpha = 0
 			goPhase(PHASES.PHASE_ENTERING_LETTERS)
 		}
 	}
