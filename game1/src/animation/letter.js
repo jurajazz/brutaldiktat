@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import * as STYLES from '../styles'
+import * as TEXT from '../text'
 
 export class Letter
 {
@@ -44,7 +45,7 @@ export class Letter
 	{
 		return this.structure.sprite.height
 	}
-	animate(elapsed,is_new_orthography)
+	animate(elapsed)
 	{
 		var letter = this.structure
 		if (!letter.is_wildcard) return;
@@ -67,7 +68,7 @@ export class Letter
 			s.angle = angle
 			s2.angle = angle
 			// viditelnost medzi sprite a sprite2
-			if (is_new_orthography)
+			if (TEXT.is_new_orthography)
 			{
 				s.alpha = 0
 				s2.alpha = 1
@@ -78,6 +79,18 @@ export class Letter
 				s.alpha = alpha
 				s2.alpha = 1-alpha
 			}
+		}
+	}
+	animateMark(elapsed)
+	{
+		var mark = this.structure.mark
+		if (!mark) return;
+		let alpha = 0.4+0.1*Math.cos(elapsed / 10.0)
+		if (!this.structure.is_correct)
+		{
+			var s=mark.box
+			s.alpha = alpha
+			//s.scale.set(alpha)
 		}
 	}
 	setPosition(x,y)
