@@ -9,6 +9,7 @@ import { TextButton } from './button'
 
 import * as TEXT from './text'
 import * as CURSOR from './animation/cursor'
+import * as LETTER from './animation/letter'
 
 // stavovi stroj
 var currentCursorIndex = 0
@@ -21,7 +22,7 @@ const PHASE_SHOWING_HIGH_SCORE = 4
 var phase = PHASE_ENTERING_LETTERS
 
 // list of letters
-var letters = []
+var letters = [] // list of objects LETTER.Letter
 var elapsed=0 // total elapsed time for animations
 
 // Create the application helper and add its render target to the page
@@ -195,7 +196,8 @@ function setCurrentPositionChar(char)
 {
 	if (phase != PHASE_ENTERING_LETTERS) return
 
-	let letter = getWildcardLetterWithIndex(currentCursorIndex)
+	let l = getWildcardLetterWithIndex(currentCursorIndex)
+	let letter = l.getStructure()
 	letter.is_selected=true
 	letter.is_selection_ypsilon=false
 	if (char == 'y')
@@ -280,8 +282,12 @@ function goPhase(new_phase)
 function cursorGotoCurrentPosition()
 {
 	if (cursor_graphics==null) return
-	let letter = getWildcardLetterWithIndex(currentCursorIndex)
-	if (letter!=0) cursor_graphics.startMove(letter.sprite.x, letter.sprite.y)
+	let l = getWildcardLetterWithIndex(currentCursorIndex)
+	if (l!=0)
+	{
+		let letter = l.getStructure()
+		cursor_graphics.startMove(letter.sprite.x, letter.sprite.y)
+	}
 }
 
 function getWildcardLetterWithIndex(letter_index)
@@ -290,7 +296,7 @@ function getWildcardLetterWithIndex(letter_index)
 	var letter_found=0
 	letters.forEach((letter, index) =>
 	{
-		if (!letter.is_wildcard) return
+		if (!letter.getStructure().is_wildcard) return
 		if (letter_index == i)
 		{
 			//console.log("getWildcardLetterWithIndex found:"+letter_index)
@@ -306,8 +312,9 @@ function getWildcardLetterWithIndex(letter_index)
 function checkIfAllLettersAreFilled()
 {
 	var some_undecided_letter_found=0
-	letters.forEach((letter, index) =>
+	letters.forEach((l, index) =>
 	{
+		let letter = l.getStructure()
 		if (!letter.is_wildcard) return
 		if (letter.is_selected) return
 		some_undecided_letter_found = true
@@ -319,8 +326,9 @@ function checkIfAllLettersAreFilled()
 function evaluateCorrectness()
 {
 	var some_undecided_letter_found=0
-	letters.forEach((letter, index) =>
+	letters.forEach((l, index) =>
 	{
+		let letter = l.getStructure()
 		var correct=false
 		if (!letter.is_wildcard) return
 		if (!letter.is_selected) return
@@ -365,8 +373,9 @@ function addMark(letter, is_correct)
 function markCorrectLetters()
 {
 	cursor_graphics.hide()
-	letters.forEach((letter, index) =>
+	letters.forEach((l, index) =>
 	{
+		let letter=l.getStructure()
 		if (!letter.is_wildcard) return
 		addMark(letter, letter.is_correct)
 	})
@@ -435,76 +444,57 @@ function showText()
 			if (is_long) char='ý';
 		}
 		if (char==TEXT.KTOREKOLVEK_IY_KRATKE || char==TEXT.KTOREKOLVEK_IY_DLHE) can_be_any_iy = true;
-		const letter = {
-	        sprite: new PIXI.Text(char,
-					{ fontFamily : STYLES.fontFamily,
-						fontSize: 24,
-						fill : color,
-						align : 'center'}),
-					sprite2: new PIXI.Text(char_alternative,
-					{ fontFamily : STYLES.fontFamily,
-						fontSize: 24,
-						fill : color,
-						align : 'center'}),
-					char: char,
-					is_wildcard: is_wildcard,
-					is_long: is_long,
-					index: index,
-					is_selected: false,          // true ak uzivatel zvolil nejake pismeno i/y
-					is_selection_ypsilon: false,
-					should_be_ypsilon: should_be_ypsilon,
-					can_be_any_iy: can_be_any_iy,
-					is_correct: false, // true ak je visledok spravni
-					mark: null, // graficki simbol pre zobrazenie ne/spravnosti (is_correct)
-	    };
-	    //letter.sprite.anchor.x = 0.5;
-	    //letter.sprite.anchor.y = 0.7;
-			let s=letter.sprite
-			let s2=letter.sprite2
-			s.x = basex;
-			s2.x = basex;
-			s.y = basey;
-			s2.y = basey;
-			s2.alpha = 0; // neviditelna alternativa
-	    textContainer.addChild(s);
-			if (is_wildcard)
+		const letter_object = new LETTER.Letter(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy);
+		const letter = letter_object.getStructure()
+		//letter.sprite.anchor.x = 0.5;
+		//letter.sprite.anchor.y = 0.7;
+		let s=letter.sprite
+		let s2=letter.sprite2
+		s.x = basex;
+		s2.x = basex;
+		s.y = basey;
+		s2.y = basey;
+		s2.alpha = 0; // neviditelna alternativa
+		textContainer.addChild(s);
+		if (is_wildcard)
+		{
+			textContainer.addChild(letter.sprite2);
+			index++;
+		}
+		//gameScreen.addChild(letter.sprite);
+		//console.log("Pismeno "+i+" zobrazene na "+basex+","+basey);
+		letters.push(letter_object);
+		// generuj poziciu dalsieho pismena
+		basex+=letter.sprite.width
+		if (basex>rightx)
+		{
+			// prechod na novi riadok
+			// hladaj poslednu medzeru
+			let pocetPismenNaPresun=0;
+			let id=i;
+			while (letters[id].getStructure().char!=' ')
 			{
-				textContainer.addChild(letter.sprite2);
-				index++;
+				id--;
+				pocetPismenNaPresun++;
+				if (id==0) break; // ak bi tam nahodou nebola
 			}
-			//gameScreen.addChild(letter.sprite);
-			//console.log("Pismeno "+i+" zobrazene na "+basex+","+basey);
-	    letters.push(letter);
-			// generuj poziciu dalsieho pismena
-			basex+=letter.sprite.width
-			if (basex>rightx)
+			if (pocetPismenNaPresun>0) id++;
+			// posun slovo z predchadzajuceho riadku na novi riadok
+			basex=leftx;
+			basey+=line_size_y;
+			for (let j=0;j<pocetPismenNaPresun;j++)
 			{
-				// prechod na novi riadok
-				// hladaj poslednu medzeru
-				let pocetPismenNaPresun=0;
-				let id=i;
-				while (letters[id].char!=' ')
-				{
-					id--;
-					pocetPismenNaPresun++;
-					if (id==0) break; // ak bi tam nahodou nebola
-				}
-				if (pocetPismenNaPresun>0) id++;
-				// posun slovo z predchadzajuceho riadku na novi riadok
-				basex=leftx;
-				basey+=line_size_y;
-				for (let j=0;j<pocetPismenNaPresun;j++)
-				{
-					//console.log("Presun pismeno "+letters[id+j].char);
-					let s=letters[id+j].sprite;
-					let s2=letters[id+j].sprite2;
-					s.x = basex;
-					s2.x = basex;
-					s.y = basey;
-					s2.y = basey;
-					basex+=s.width;
-				}
+				//console.log("Presun pismeno "+letters[id+j].char);
+				let l=letters[id+j].getStructure()
+				let s=l.sprite;
+				let s2=l.sprite2;
+				s.x = basex;
+				s2.x = basex;
+				s.y = basey;
+				s2.y = basey;
+				basex+=s.width;
 			}
+		}
 	}
 	addLettersAnimation();
 }
@@ -524,6 +514,9 @@ function addLettersAnimation()
 	})
 }
 
+function setLettersPosition(letter) { letter.setPosition() }
+function animateLetter(letter) { letter.animate(elapsed,is_new_orthography) }
+
 function animateTextContainer()
 {
 	let max_frames=50
@@ -535,57 +528,6 @@ function animateTextContainer()
 	}
 	let scale=1-(max_frames-elapsed)/max_frames*0.1*Math.cos(elapsed / 3.0)
 	textContainer.scale.set(scale,scale)
-}
-
-function setLettersPosition(letter)
-{
-	if (!letter.is_wildcard) return
-	let s = letter.sprite
-	//let s=letter.sprite;
-	s.pivot.set(s.width/2,s.height/2);
-	s.x+=s.width/2;
-	s.y+=s.height/2;
-	s.scale.set(0.9,0.9);
-	s = letter.sprite2
-	s.pivot.set(s.width/2,s.height/2);
-	s.x+=s.width*1;
-	s.y+=s.height/2;
-}
-
-function animateLetter(letter)
-{
-	if (!letter.is_wildcard) return;
-	let s=letter.sprite
-	let s2=letter.sprite2
-	if (letter.is_selected)
-	{
-		s.alpha = 0
-		s2.alpha = 0
-		s.angle = 0
-		s2.angle = 0
-		if (letter.is_selection_ypsilon)
-			s.alpha = 1
-		else
-			s2.alpha = 1
-	}
-	else
-	{
-		let angle=10*Math.cos(elapsed / 13.0+letter.index)
-		s.angle = angle
-		s2.angle = angle
-		// viditelnost medzi sprite a sprite2
-		if (is_new_orthography)
-		{
-			s.alpha = 0
-			s2.alpha = 1
-		}
-		else
-		{
-			let alpha = 0.5+0.5*Math.cos(elapsed / 20.0 + 2.5*letter.index)
-			s.alpha = alpha
-			s2.alpha = 1-alpha
-		}
-	}
 }
 
 function animateMark(letter)
