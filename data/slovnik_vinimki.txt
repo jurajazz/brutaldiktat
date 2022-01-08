@@ -59,3 +59,4 @@
 	kriminalisticko	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/kriminalistick%C3%BD
 	vycizelované	https://www.kvizy.eu/slovensky-jazyk/identifikacia-slova?nezname_slovo=vycizelovan%C3%BD
 	Manželkine	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/manželkin
+	vytypované	https://jazykovaporadna.sme.sk/q/3121/
