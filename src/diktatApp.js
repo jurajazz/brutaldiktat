@@ -1,10 +1,11 @@
 import * as PIXI from 'pixi.js'
 import { HTMLText } from '@pixi/text-html';
 
+import diktatData from "../assets/diktat-data.yaml"
 import * as STYLES from './styles'
 import "./styles.css"
-import diktatData from "../assets/diktat-data.yaml"
 import { TextButton } from './button'
+import './icko'
 import WordListHandler from './wordListHandler'
 
 // Create the application helper and add its render target to the page
@@ -62,8 +63,10 @@ let yButton = new TextButton("y/ý",
 
 newGameButton.on('mousedown', onDown);
 newGameButton.on('touchstart', onDown);
-iButton.on('mousedown', updateCursorPositionOnScreen)
-iButton.on('touchstart', updateCursorPositionOnScreen)
+iButton.on('mousedown', addMakkeI)
+iButton.on('touchstart', addMakkeI)
+yButton.on('mousedown', addTvrdeY)
+yButton.on('touchstart', addTvrdeY)
 
 function onDown(eventData) {
     const wordList = []
@@ -78,11 +81,19 @@ function onDown(eventData) {
     updateCursorPositionOnScreen()
 }
 
-function updateCursorPositionOnScreen() {
-    if (!wordListHandler != null) {
+function updateCursorPositionOnScreen(makkeI) {
+    if (wordListHandler != null) {
         textContainer.removeChildren()
         textContainer.addChild(generateText(wordListHandler.moveCursorRight()))
     }
+}
+
+function addMakkeI() {
+    wordListHandler.fillLetter(true)
+}
+
+function addTvrdeY() {
+    wordListHandler.fillLetter(false)
 }
 
 gameScreen.addChild(newGameButton);
