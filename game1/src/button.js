@@ -27,7 +27,11 @@ export class TextButton extends PIXI.Container {
         this.addChild(this.buttonText)
         this.buttonText.anchor.set(0.5, 0.5)
     }
-
+    addEventListeners(eventListStr, targetCallback) {
+        eventListStr.forEach(function (item, index) {
+            this.on(item, targetCallback)
+          }, this);
+    }
 }
 
 export class Button extends PIXI.Sprite {
