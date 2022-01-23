@@ -33,14 +33,17 @@ function goPhase(new_phase)
 		case PHASES.PHASE_INTRO_SCREEN:
 			SCREEN_INTRO.initialize(diktatApp)
 			SCREEN_INTRO.showScreen()
-			SCREEN_INTRO.buttonWithYpsilon.on('mousedown', buttonStartWithYpsilonClicked)
-			SCREEN_INTRO.buttonWithoutYpsilon.on('mousedown', buttonStartWithoutYpsilonClicked)
+			SCREEN_INTRO.buttonWithYpsilon.addEventListeners(
+				['mousedown', 'tap'], buttonStartWithYpsilonClicked)
+			SCREEN_INTRO.buttonWithoutYpsilon.addEventListeners(
+				['mousedown', 'tap'], buttonStartWithoutYpsilonClicked)
 			break
 		case PHASES.PHASE_ENTERING_LETTERS:
 			SCREEN_INTRO.hide()
 			SCREEN_DIKTAT.initialize(diktatApp)
 			SCREEN_DIKTAT.showGameScreen()
-			SCREEN_DIKTAT.buttonNextPhase.on('mousedown', buttonNextPhaseClicked)
+			SCREEN_DIKTAT.buttonNextPhase.addEventListeners(
+				['mousedown', 'tap'], buttonNextPhaseClicked)
 			break
 		case PHASES.PHASE_SHOWING_RESULTS:
 			SCREEN_DIKTAT.showCorrectnessResults()

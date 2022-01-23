@@ -117,9 +117,9 @@ function showButtons()
 		gameScreen.addChild(backButton)
 	}
 
-	iButton.on('mousedown', buttonIclicked)
-	yButton.on('mousedown', buttonYclicked)
-	backButton.on('mousedown', buttonLeftClicked)
+	iButton.addEventListeners(['mousedown', 'tap'], buttonIclicked)
+	yButton.addEventListeners(['mousedown', 'tap'], buttonYclicked)
+	backButton.addEventListeners(['mousedown', 'tap'], buttonLeftClicked)
 }
 
 function buttonIclicked()
