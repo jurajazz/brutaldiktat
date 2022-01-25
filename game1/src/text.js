@@ -75,13 +75,13 @@ export function placeLetters(letters)
 			is_long=true;
 			char_alternative='í';
 		}
+		if (char==KTOREKOLVEK_IY_KRATKE || char==KTOREKOLVEK_IY_DLHE) can_be_any_iy = true;
 		if (is_wildcard)
 		{
 			color = STYLES.colorWildCardLetter
 			char='y';
 			if (is_long) char='ý';
 		}
-		if (char==KTOREKOLVEK_IY_KRATKE || char==KTOREKOLVEK_IY_DLHE) can_be_any_iy = true;
 		let letter_object = new LETTER.Letter(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy,size);
 		//letter_object.spos(basex,basey)
 		letter_object.setPosition(basex,basey)
