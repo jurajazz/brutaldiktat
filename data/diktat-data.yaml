@@ -101,6 +101,14 @@ data:
     - veta: Z akropoly sme ho brali bez barly a od akvabely sme vypýtali akvarely a hovorili o diferenciáli.
     - veta: Bývali sme v hoteli, kde mali dva areály a hovorili sme o akvareli.
     - veta: Kamarátky tety Viery sa modlili podľa moslimskej viery.
+    - veta: Krása kivích krivých pier a levích a pávích hier. # kiví kivia kivie príd. vzťahujúci sa na vtáka kivi; patriaci, vlastný kivimu. Skloňuje sa podľa vzoru páví.  https://www.kvizy.eu/slovensky-jazyk/tvary-slova/kiv%C3%AD
+    - veta: Po východnej víchrici ostal krivý klinec a páví hrebeň.
+    - veta: Dva víry z východnej víchrice sa preháňali vírivými výbušnými vírusovými vínovicami.
+    - veta: Vírus vydáva výťažok vírivých vaní a vídava levích bratov.
+    - veta: Chlapi z víchrice sú vítaní vyťažiť zlato a víťaziť nad výčapmi.
+    - veta: Vodný vír a vychádza z východiska vírivých výčapov, lesných víl a náhodnej výchylky.
+    - veta: Veselí chlapi narysovali rysa ostrovida.
+    - veta: Rytier v skrini moril rizoto kým nepokoril krištáľovo bielu kryhu.
   pomoc: # Pomocné otázky
     - makro-otazky: # (- m:) Makro otázky, ktoré sa vyskytujú pri rôznych slovách. Kazde sa sklada s konkretnych-otazok
       - makro-predpona-vy: # zoznam otazok pre predponu vy
@@ -192,7 +200,8 @@ data:
     - slovo: kisňa
     - slovo: vták kivy
     - slovo: ovocie kivi
-    - slovo: kivích
+    - slovo: krása kivích pier # kiví kivia kivie príd. vzťahujúci sa na vtáka kivi; patriaci, vlastný kivimu. Skloňuje sa podľa vzoru páví.  https://www.kvizy.eu/slovensky-jazyk/tvary-slova/kiv%C3%AD
+    - slovo: pávích
     - slovo: kokila
     - slovo: maminkinými
     - slovo: mamkinými
@@ -202,10 +211,11 @@ data:
     - slovo: neantikizovali
     - slovo: neškicovať
     - slovo: okinavských
-    - slovo: pekinskými
+    - slovo: pekinskými # https://jazykovaporadna.sme.sk/q/1422/
     - slovo: potemkinovský most
     - slovo: rakija
     - slovo: reslovakizačným
+    - slovo: víchrica
     - slovo: skiboby
     - slovo: skibus
     - slovo: skica
@@ -218,7 +228,7 @@ data:
     - slovo: tabakizmami
     - slovo: takisto
     - slovo: tankista
-    - slovo: tokijský
+    - slovo: tokijský samuraj
     - slovo: zakikiríkať
     - slovo: takíto vid
     - slovo: takíto chlapi
@@ -245,8 +255,8 @@ data:
     - slovo: o šmirgli
     - slovo: o medokýši
     - slovo: o mililitri
-    - slovo: dva misály
-    - slovo: o misáli
+    - slovo: dva misály # katolicka liturg. omšová kniha - https://www.kvizy.eu/slovensky-jazyk/tvary-slova/mis%C3%A1l
+    - slovo: o misáli # katolicka liturg. omšová kniha
     - slovo: o napínači
     - slovo: o nasycovači
     - slovo: ps[iy]
@@ -276,3 +286,4 @@ data:
     # ipsilon po makkej spoluhlaske
     - slovo: bruchabôľy
     - slovo: Helsinki
+    - slovo: výchylky
