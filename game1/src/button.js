@@ -25,6 +25,7 @@ export class TextButton extends PIXI.Container {
             text,
             STYLES.buttonText)
         this.addChild(this.buttonText)
+	  this.alpha = 1
         this.buttonText.anchor.set(0.5, 0.5)
     }
     addEventListeners(eventListStr, targetCallback) {

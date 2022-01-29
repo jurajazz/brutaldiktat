@@ -24,6 +24,17 @@ var cursor_graphics = null // object of CURSOR.Cursor
 
 var ticker = false // true ak uz je antivni
 
+var horizontal_mode = false
+var screen_width = window.innerWidth
+var screen_height = window.innerHeight
+
+export function windowSizeChanged(w,h,horizontal)
+{
+	horizontal_mode = horizontal
+	screen_width = w
+	screen_height = h
+}
+
 export function initialize(app)
 {
 	if (application) return
@@ -40,26 +51,59 @@ export function initialize(app)
 
 function showMainLabel()
 {
-	let y = -window.innerHeight/2 + 40
-	const label1 = new PIXI.Text('Brutál Diktát',
-	{ fontFamily : STYLES.fontFamily,
-		fontSize: 80,
-		fill : 0x000000,
-		align : 'center'})
-	label1.y = y
-	label1.x = -label1.width/2 // center
-	gameScreen.addChild(label1);
+	if (horizontal_mode)
+	{
+		var ypos_big = -screen_height*0.5 + screen_height*0.05
+		var ypos_small = -screen_height*0.5 + screen_height*0.05
+		var fontsize_big = screen_height*0.1
+		var fontsize_small = screen_height*0.08
+		const label1 = new PIXI.Text('Brutál\nDiktát',
+		{ fontFamily : STYLES.fontFamily,
+			fontSize: fontsize_big,
+			fill : 0x000000,
+			align : 'center'})
+		label1.y = ypos_big
+		label1.x = -label1.width/2 - screen_width/2 + screen_width*0.1
 
-	var pravopis='Aktuálny pravopis'
-	if (TEXT.is_new_orthography) pravopis='Nový pravopis (jedno i)'
-	var label2 = new PIXI.Text(pravopis,
-	{ fontFamily : STYLES.fontFamily,
-		fontSize: 30,
-		fill : 0x000000,
-		align : 'center'})
-	label2.y = y+80
-	label2.x = -label2.width/2 // center
-	gameScreen.addChild(label2);
+		var pravopis='Aktuálny\npravopis'
+		if (TEXT.is_new_orthography) pravopis='Nový pravopis\n(jedno i)'
+		var label2 = new PIXI.Text(pravopis,
+		{ fontFamily : STYLES.fontFamily,
+			fontSize: fontsize_small,
+			fill : 0x000000,
+			align : 'center'})
+		label2.y = ypos_small
+		label2.x = -label2.width/2 + screen_width/2 - screen_width*0.1
+		gameScreen.addChild(label1);
+		gameScreen.addChild(label2);
+	}
+	else
+	{
+		// vertical mode
+		var ypos_big = -screen_height*0.5 + screen_height*0.05
+		var fontsize_big = screen_height*0.05
+		var fontsize_small = screen_height*0.03
+		var ypos_small = ypos_big + fontsize_big*1.1
+		const label1 = new PIXI.Text('Brutál Diktát',
+		{ fontFamily : STYLES.fontFamily,
+			fontSize: fontsize_big,
+			fill : 0x000000,
+			align : 'center'})
+		label1.y = ypos_big
+		label1.x = -label1.width/2 // center
+
+		var pravopis='Aktuálny pravopis'
+		if (TEXT.is_new_orthography) pravopis='Nový pravopis (jedno i)'
+		var label2 = new PIXI.Text(pravopis,
+		{ fontFamily : STYLES.fontFamily,
+			fontSize: fontsize_small,
+			fill : 0x000000,
+			align : 'center'})
+		label2.y = ypos_small
+		label2.x = -label2.width/2 // center
+		gameScreen.addChild(label1);
+		gameScreen.addChild(label2);
+	}
 }
 
 // Add the 'keydown' event listener to our document
@@ -92,22 +136,45 @@ export let buttonNextPhase = null
 
 function showButtons()
 {
-	let buttonHeight=40
-	let y = window.innerHeight/2-buttonHeight
-	//console.log("showButtons h:"+window.innerHeight)
-	yButton = new TextButton("y",
-	    100, buttonHeight,
-	    -120, y)
-      iButton = new TextButton("i",
-    	    -100, buttonHeight,
-    	    0, y)
-	backButton = new TextButton("<<",
-	    100, buttonHeight,
-	    +120, y)
-	let y2 = window.innerHeight/2-buttonHeight*2
-	buttonNextPhase = new TextButton("-",
-	    400, buttonHeight,
-	    0, y2)
+	if (horizontal_mode)
+	{
+		let buttonHeight=screen_width*0.1
+		let y = screen_height*0.5-buttonHeight*0.5
+		//console.log("showButtons h:"+window.innerHeight)
+		yButton = new TextButton("y",
+			buttonHeight, buttonHeight,
+			-screen_width*0.5 + screen_width*0.1, y)
+	      iButton = new TextButton("i",
+			buttonHeight, buttonHeight,
+			screen_width*0.5 - screen_width*0.1, y)
+		backButton = new TextButton("<<",
+			buttonHeight, buttonHeight,
+			screen_width*0.5 - screen_width*0.1, y-buttonHeight*1.5)
+		let y2 = window.innerHeight/2-buttonHeight*2
+		buttonNextPhase = new TextButton("-",
+		    400, buttonHeight,
+		    0, y2)
+	}
+	else
+	{
+		// vertical mode
+		let buttonHeight=40
+		let y = window.innerHeight/2-buttonHeight
+		//console.log("showButtons h:"+window.innerHeight)
+		yButton = new TextButton("y",
+		    100, buttonHeight,
+		    -120, y)
+	      iButton = new TextButton("i",
+	    	    -100, buttonHeight,
+	    	    0, y)
+		backButton = new TextButton("<<",
+		    100, buttonHeight,
+		    +120, y)
+		let y2 = window.innerHeight/2-buttonHeight*2
+		buttonNextPhase = new TextButton("-",
+		    400, buttonHeight,
+		    0, y2)
+	}
 	gameScreen.addChild(buttonNextPhase)
 	buttonNextPhase.alpha = 0
 	gameScreen.addChild(iButton)
@@ -181,7 +248,27 @@ function showBackground()
 	const back = new PIXI.Graphics();
 	back.beginFill(0xffffff);
 	//back.lineStyle(3, 0xffffff, 5);
-	back.drawRoundedRect(-250, -180, 500, 400, 10);
+	if (horizontal_mode)
+	{
+		var margin_w = screen_width*0.2
+		back.drawRoundedRect(
+			-screen_width*0.5+margin_w,
+			-screen_height*0.5+screen_height*0.2,
+			screen_width-margin_w*2,
+			screen_height*0.85,
+			10);
+	}
+	else
+	{
+		// vertical mode
+		var margin_w = screen_width*0.05
+		back.drawRoundedRect(
+			-screen_width*0.5+margin_w,
+			-screen_height*0.5+screen_height*0.2,
+			screen_width-margin_w*2,
+			screen_height*0.7,
+			10);
+	}
 	back.endFill();
 	textContainer.addChild(back);
 }

@@ -19,6 +19,9 @@ var application=null; // napriklad diktatApp
 var introScreen;
 var textContainer;
 var cursor_graphics = null // object of CURSOR.Cursor
+var screen_width = window.innerWidth
+var screen_height = window.innerHeight
+var horizontal_mode = false
 
 var currentCursorIndex = 0
 var cursor_graphics = null // object of CURSOR.Cursor
@@ -34,26 +37,48 @@ export function initialize(app)
 	application.stage.addChild(introScreen)
 }
 
+export function windowSizeChanged(w,h,horizontal)
+{
+	horizontal_mode = horizontal
+	screen_width = w
+	screen_height = h
+}
+
 export function showScreen()
 {
 	showBackground()
-	let y = -100 //-window.innerHeight/2 + 100
-	const label1 = new PIXI.Text('Brutál Diktát',
+	var fontsize_big = screen_height*0.2
+	var fontsize_small = screen_height*0.1
+	let ypos_big = -screen_height*0.5+screen_height*0.2
+	let ypos_small = ypos_big+fontsize_big*1.5
+	var text_big = 'Brutál Diktát'
+	var text_small = 'Vyskúšajte, aké je písanie'
+	if (!horizontal_mode)
+	{
+		// vertical mode - 2 lines text
+		ypos_big = -screen_height*0.5+screen_height*0.1
+		ypos_small = ypos_big+fontsize_big*1.5
+		fontsize_big /= 2
+		fontsize_small /= 2
+		text_big = 'Brutál\nDiktát'
+		text_small = 'Vyskúšajte,\naké je písanie'
+	}
+	const label1 = new PIXI.Text(text_big,
 	{ fontFamily : STYLES.fontFamily,
-		fontSize: 80,
+		fontSize: fontsize_big,
 		fill : 0x000000,
 		align : 'center'})
-	label1.y = y
+	label1.y = ypos_big
 	label1.x = -label1.width/2 // center
 	introScreen.addChild(label1);
 
-	var pravopis='Vyskúšajte, aké je písanie'
+	var pravopis=text_small
 	var label2 = new PIXI.Text(pravopis,
 	{ fontFamily : STYLES.fontFamily,
-		fontSize: 30,
+		fontSize: fontsize_small,
 		fill : 0x000000,
 		align : 'center'})
-	label2.y = y+100
+	label2.y = ypos_small
 	label2.x = -label2.width/2 // center
 	introScreen.addChild(label2);
 
@@ -65,15 +90,34 @@ export let buttonWithoutYpsilon = null
 
 function showButtons()
 {
-	let buttonHeight=60
-	let y = 1.5*buttonHeight
-	buttonWithYpsilon = new TextButton("s ypsilonom",
-	    400, buttonHeight,
-	    0, y)
+	var text_s_y = "s ypsilonom"
+	var text_bez_y = "bez neho"
+	var buttons_count=2
+	if (horizontal_mode)
+	{
+		let buttonHeight=screen_height*0.5*0.5
+		let y = 1.5*buttonHeight
+		let buttonWidth = screen_width*0.8/(buttons_count+1)
+		buttonWithYpsilon = new TextButton(text_s_y,
+		    buttonWidth, buttonHeight,
+		    -buttonWidth, y)
+		buttonWithoutYpsilon = new TextButton(text_bez_y,
+		    buttonWidth, buttonHeight,
+		    +buttonWidth, y)
+	}
+	else
+	{
+		let buttonHeight=screen_height*0.5/(buttons_count+1)
+		let y = buttonHeight+0.33*buttonHeight
+		let buttonWidth = screen_width*0.8
+		buttonWithYpsilon = new TextButton(text_s_y,
+		    buttonWidth, buttonHeight,
+		    0, y)
+		buttonWithoutYpsilon = new TextButton(text_bez_y,
+		    buttonWidth, buttonHeight,
+		    0, y+buttonHeight+0.33*buttonHeight)
+	}
 	introScreen.addChild(buttonWithYpsilon)
-	buttonWithoutYpsilon = new TextButton("alebo bez neho",
-	    400, buttonHeight,
-	    0, y+buttonHeight*1.2)
 	introScreen.addChild(buttonWithoutYpsilon)
 }
 

@@ -19,11 +19,24 @@ let diktatApp = new PIXI.Application({
 	forceCanvas: true
 });
 
+window.innerHeight = window.innerHeight*0.95 // docasna kompenzacia dolneho bieleho pruhu
+
 window.onresize = function (event){
 	var w = window.innerWidth;
 	var h = window.innerHeight;
 	//console.log("window.onresize: " + w + "," + h);
 }
+
+function windowSizeChanged(w,h)
+{
+	// viber medzi horizontalnim a vertikalnim rozlozenim, potrebne pre mobili
+	var horizontal=false
+	if (h<w*0.8) horizontal=true
+	SCREEN_INTRO.windowSizeChanged(w,h,horizontal)
+	SCREEN_DIKTAT.windowSizeChanged(w,h,horizontal)
+}
+
+windowSizeChanged(window.innerWidth, window.innerHeight);
 
 function goPhase(new_phase)
 {
