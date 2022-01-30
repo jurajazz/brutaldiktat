@@ -41,18 +41,17 @@ export function generateNewText ()
   return wordListChallenge
 }
 
-export function placeLetters(letters)
+export function placeLetters(letters,textContainer,font_size)
 {
 	var wordListChallenge = generateNewText()
 	var wordListJoined = wordListChallenge.join(', ')
 
-	let max_lines_count=8;
-	let line_size_y=30;
-	let leftx=-200;
-	let rightx=200;
-	let basex=leftx;
-	let basey=-line_size_y*max_lines_count/2;
-	let size = 24
+	let line_size_y=font_size*1.3
+	let leftx=-textContainer.width*0.45
+	let rightx=textContainer.width*0.45
+	let bottomy=textContainer.height*0.45
+	let basex=leftx
+	let basey=-textContainer.position.y/2
 	let index=0;
 	for (let i = 0; i < wordListJoined.length; i++)
 	{
@@ -82,8 +81,9 @@ export function placeLetters(letters)
 			char='y';
 			if (is_long) char='ý';
 		}
-		let letter_object = new LETTER.Letter(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy,size);
+		let letter_object = new LETTER.Letter(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy,font_size);
 		//letter_object.spos(basex,basey)
+		//console.log("Letter: basex:"+basex+"basey:"+basey+" font_size:"+font_size)
 		letter_object.setPosition(basex,basey)
 		letters.push(letter_object)
 		// generuj poziciu dalsieho pismena
@@ -111,6 +111,9 @@ export function placeLetters(letters)
 				l.setPosition(basex,basey)
 				basex+=l.getWidth();
 			}
+			//console.log("Line check: basey:"+basey+" bottomy:"+bottomy+" font_size:"+font_size)
+			if (basey>bottomy) return false // nepodarilo sa vsetki pismena ulozit
 		}
 	}
+	return true // podarilo sa vsetki pismena ulozit
 }

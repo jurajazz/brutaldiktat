@@ -41,11 +41,11 @@ export function initialize(app)
 	application = app
 
 	gameScreen = new PIXI.Container();
-	gameScreen.position.set(window.innerWidth/2, window.innerHeight/2)
+	gameScreen.position.set(screen_width*0.5, screen_height*0.5)
 	application.stage.addChild(gameScreen)
 
 	textContainer = new PIXI.Container();
-	textContainer.position.set(window.innerWidth/2, window.innerHeight*0.5)
+	textContainer.position.set(screen_width*0.5, screen_height*0.5)
 	application.stage.addChild(textContainer)
 }
 
@@ -175,7 +175,6 @@ function showButtons()
 		    400, buttonHeight,
 		    0, y2)
 	}
-	gameScreen.addChild(buttonNextPhase)
 	buttonNextPhase.alpha = 0
 	gameScreen.addChild(iButton)
 	if (!TEXT.is_new_orthography)
@@ -306,6 +305,7 @@ export function showCorrectnessResults()
 		// offer new orthograpy button
 		buttonNextPhase.alpha = 1
 	}
+	textContainer.addChild(buttonNextPhase)
 }
 
 // search for letter position on the
@@ -435,8 +435,18 @@ function showText()
 	showBackground()
 	elapsed = 0
 	currentCursorIndex = 0
-	letters=[]
-	TEXT.placeLetters(letters)
+	// skus ulozit slova tak, abi sa zmestili a pritom viplnali priestor
+	let max_size=70
+	let min_size=10
+	for (let font_size = max_size; font_size > min_size; font_size-=2)
+	{
+		letters=[]
+		if (TEXT.placeLetters(letters,textContainer,font_size))
+		{
+			break;
+		}
+		//letters.forEach(addLetterToContainer);
+	}
 	letters.forEach(addLetterToContainer);
 	// nastav polohu nedefinovanich pismen
 	letters.forEach(setLettersPosition);
