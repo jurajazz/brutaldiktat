@@ -47,6 +47,8 @@ export function initialize(app)
 	textContainer = new PIXI.Container();
 	textContainer.position.set(screen_width*0.5, screen_height*0.5)
 	application.stage.addChild(textContainer)
+
+	TEXT.cacheAllLettersWidths(50)
 }
 
 function showMainLabel()
@@ -158,18 +160,19 @@ function showButtons()
 	else
 	{
 		// vertical mode
-		let buttonHeight=40
-		let y = window.innerHeight/2-buttonHeight
+		let buttonHeight=screen_height*0.1
+		let buttonWidth=screen_width/(3+1)
+		let y = screen_height*0.5-buttonHeight*0.25
 		//console.log("showButtons h:"+window.innerHeight)
 		yButton = new TextButton("y",
-		    100, buttonHeight,
-		    -120, y)
+		    buttonWidth, buttonHeight,
+		    -buttonWidth*1.2, y)
 	      iButton = new TextButton("i",
-	    	    -100, buttonHeight,
+	    	    buttonWidth, buttonHeight,
 	    	    0, y)
 		backButton = new TextButton("<<",
-		    100, buttonHeight,
-		    +120, y)
+		    buttonWidth, buttonHeight,
+		    buttonWidth*1.2, y)
 		let y2 = window.innerHeight/2-buttonHeight*2
 		buttonNextPhase = new TextButton("-",
 		    400, buttonHeight,
@@ -435,17 +438,31 @@ function showText()
 	showBackground()
 	elapsed = 0
 	currentCursorIndex = 0
+	// generovanie textu
+	var wordListChallenge = TEXT.generateNewText()
+	var wordListJoined = wordListChallenge.join(', ')
+	console.log("GenText: "+wordListJoined)
 	// skus ulozit slova tak, abi sa zmestili a pritom viplnali priestor
 	let max_size=70
 	let min_size=10
-	for (let font_size = max_size; font_size > min_size; font_size-=2)
 	{
-		letters=[]
-		if (TEXT.placeLetters(letters,textContainer,font_size))
+		var dstart = performance.now();
+		console.log("Drawing letters")
+		LETTER.disableRender()
+		for (let font_size = max_size; font_size > min_size; font_size-=2)
 		{
-			break;
+			//console.log("Drawing letters font:"+font_size)
+			letters=[]
+			if (TEXT.placeLetters(wordListJoined,letters,textContainer,font_size))
+			{
+				letters=[]
+				LETTER.enableRender()
+				TEXT.placeLetters(wordListJoined,letters,textContainer,font_size)
+				break;
+			}
+			var dend = performance.now();
 		}
-		//letters.forEach(addLetterToContainer);
+		console.log("Drawing letters EndTime:"+(dend-dstart)+"ms")
 	}
 	letters.forEach(addLetterToContainer);
 	// nastav polohu nedefinovanich pismen

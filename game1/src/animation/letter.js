@@ -2,25 +2,24 @@ import * as PIXI from 'pixi.js'
 import * as STYLES from '../styles'
 import * as TEXT from '../text'
 
+var render_enabled = true
+
+export function enableRender()
+{
+	render_enabled = true
+}
+export function disableRender()
+{
+	render_enabled = false
+}
+
 export class Letter
 {
 	constructor(char,char_alternative,color,is_wildcard,is_long,index,should_be_ypsilon,can_be_any_iy,size)
 	{
 		this.structure = {
-			sprite: new PIXI.Text(char,
-			{
-				fontFamily : STYLES.fontFamily,
-				fontSize: size,
-				fill : color,
-				align : 'center'
-			}),
-			sprite2: new PIXI.Text(char_alternative,
-			{
-				fontFamily : STYLES.fontFamily,
-				fontSize: size,
-				fill : color,
-				align : 'center'
-			}),
+			sprite: null,
+			sprite2: null,
 			char: char,
 			is_wildcard: is_wildcard,
 			is_long: is_long,
@@ -33,6 +32,23 @@ export class Letter
 			mark: null, // graficki simbol pre zobrazenie ne/spravnosti (is_correct)
 			alpha_max: 1, // maximalna alpha
 			alpha_max_selected: 1
+		}
+		if (render_enabled)
+		{
+			this.structure.sprite = new PIXI.Text(char,
+			{
+				fontFamily : STYLES.fontFamily,
+				fontSize: size,
+				fill : color,
+				align : 'center'
+			})
+			this.structure.sprite2 = new PIXI.Text(char_alternative,
+			{
+				fontFamily : STYLES.fontFamily,
+				fontSize: size,
+				fill : color,
+				align : 'center'
+			})
 		}
 	}
 	setSelected(set_selected_ypsilon)
@@ -54,10 +70,12 @@ export class Letter
 	}
 	getWidth()
 	{
+		if (!render_enabled) return 0
 		return this.structure.sprite.width
 	}
 	getHeight()
 	{
+		if (!render_enabled) return 0
 		return this.structure.sprite.height
 	}
 	animate(elapsed)
@@ -98,6 +116,7 @@ export class Letter
 	}
 	animateMark(elapsed)
 	{
+		if (!render_enabled) return
 		var mark = this.structure.mark
 		if (!mark) return;
 		let alpha = 0.4+0.1*Math.cos(elapsed / 10.0)
@@ -110,6 +129,7 @@ export class Letter
 	}
 	setPosition(x,y)
 	{
+		if (!render_enabled) return
 		var s=this.structure.sprite
 		var s2=this.structure.sprite2
 		s.x = x;
@@ -120,6 +140,7 @@ export class Letter
 	}
 	initPosition()
 	{
+		if (!render_enabled) return
 		// fine tune initial position
 		var letter = this.structure
 		if (!letter.is_wildcard) return

@@ -1,4 +1,5 @@
 import diktatData from "../assets/diktat-data.yaml"
+import * as PIXI from 'pixi.js'
 import * as LETTER from './animation/letter'
 import * as STYLES from './styles'
 
@@ -7,6 +8,8 @@ export const KTOREKOLVEK_IY_DLHE = 'Ǒ'
 export const TESTING_FILL_ALL_I = false
 
 export var is_new_orthography = false
+var cacheLetterWidths = {}
+var cached_font_size = 100
 
 export function setNewOrthography(is_new)
 {
@@ -41,11 +44,30 @@ export function generateNewText ()
   return wordListChallenge
 }
 
-export function placeLetters(letters,textContainer,font_size)
+export function cacheAllLettersWidths(font_size)
 {
-	var wordListChallenge = generateNewText()
-	var wordListJoined = wordListChallenge.join(', ')
+	cached_font_size = font_size
+	var dstart = performance.now()
+	//console.log("Caching letters")
+	let chars = ' AÁÄBCČDĎDzDžEÉFGHChIÍJKLĹĽMNŇOÓÔPQRŔSŠTŤUÚVWXYÝZŽaáäbcčdďdzdžeéfghchiíjklĺľmnňoóôpqrŕsštťuúvwxyýzž,.()'
+	for (var i = 0; i < chars.length; i++)
+	{
+		var char = chars[i]
+		let letter_object = new PIXI.Text(char,
+		{
+			fontFamily : STYLES.fontFamily,
+			fontSize: font_size,
+		})
+		let width = letter_object.width
+		cacheLetterWidths[char] = width
+		//console.log("Char:"+char+" width:",width)
+	}
+	var dend = performance.now()
+	//console.log("Caching EndTime:"+(dend-dstart)+"ms")
+}
 
+export function placeLetters(wordListJoined,letters,textContainer,font_size)
+{
 	let line_size_y=font_size*1.3
 	let leftx=-textContainer.width*0.45
 	let rightx=textContainer.width*0.45
@@ -53,6 +75,7 @@ export function placeLetters(letters,textContainer,font_size)
 	let basex=leftx
 	let basey=-textContainer.position.y/2
 	let index=0;
+	let width_scale=0.9
 	for (let i = 0; i < wordListJoined.length; i++)
 	{
 		var char=wordListJoined[i];
@@ -87,7 +110,7 @@ export function placeLetters(letters,textContainer,font_size)
 		letter_object.setPosition(basex,basey)
 		letters.push(letter_object)
 		// generuj poziciu dalsieho pismena
-		basex += letter_object.getWidth()
+		basex += getLetterOrCachedWidth(letter_object,font_size)*width_scale
 		if (basex>rightx)
 		{
 			// prechod na novi riadok
@@ -109,11 +132,28 @@ export function placeLetters(letters,textContainer,font_size)
 				//console.log("Presun pismeno "+letters[id+j].char);
 				let l=letters[id+j]
 				l.setPosition(basex,basey)
-				basex+=l.getWidth();
+				basex+=getLetterOrCachedWidth(l,font_size)*width_scale;
 			}
 			//console.log("Line check: basey:"+basey+" bottomy:"+bottomy+" font_size:"+font_size)
-			if (basey>bottomy) return false // nepodarilo sa vsetki pismena ulozit
+			if (basey>bottomy)
+			{
+				return false // nepodarilo sa vsetki pismena ulozit
+			}
 		}
 	}
 	return true // podarilo sa vsetki pismena ulozit
+}
+
+function getLetterOrCachedWidth(letter_object,font_size)
+{
+	var letter_width = letter_object.getWidth()
+	//console.log("Letter width:",char," width:",letter_width)
+	//if (letter_width == 0)
+	{
+		var char = letter_object.structure.char
+		letter_width = cacheLetterWidths[char]
+		letter_width *= font_size/cached_font_size
+		//console.log("Letter cached width:",char," width:",letter_width)
+	}
+	return letter_width
 }
