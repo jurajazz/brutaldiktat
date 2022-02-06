@@ -8,6 +8,7 @@ import * as SCREEN_HIGH_SCORE from './screen_high_score.js'
 
 import * as PHASES from './phases.js'
 import * as TEXT from './text'
+import * as SERVER from './libs/server'
 
 // Create the application helper and add its render target to the page
 let diktatApp = new PIXI.Application({
@@ -40,6 +41,7 @@ windowSizeChanged(window.innerWidth, window.innerHeight);
 
 function goPhase(new_phase)
 {
+	console.log("goPhase"+new_phase)
 	PHASES.setPhase(new_phase)
 	switch (PHASES.phase)
 	{
@@ -59,7 +61,21 @@ function goPhase(new_phase)
 				['mousedown', 'tap'], buttonNextPhaseClicked)
 			break
 		case PHASES.PHASE_SHOWING_RESULTS:
-			SCREEN_DIKTAT.showCorrectnessResults()
+			SCREEN_DIKTAT.showCorrectnessResults() 
+			// uzivatel viplnil vsetki pismena
+			var data =
+			{
+				data:
+				{
+					novi_pravopis: TEXT.is_new_orthography,
+					veta: SCREEN_DIKTAT.getWords(),
+					viplnena: SCREEN_DIKTAT.getWordsWithAnswers(),
+					chibi: SCREEN_DIKTAT.getNumberOfMistakes(),
+					zoznam_iy: SCREEN_DIKTAT.getListOfWildcards(),
+					priebeh: SCREEN_DIKTAT.getTimeline(),
+				}
+			}
+			SERVER.post(data)
 			if (TEXT.is_new_orthography)
 			{
 				SCREEN_DIKTAT.buttonNextPhase.setText("Zobraziť vyhodnotenie")

@@ -21,6 +21,7 @@ export class Letter
 			sprite: null,
 			sprite2: null,
 			char: char,
+			answer: char,
 			is_wildcard: is_wildcard,
 			is_long: is_long,
 			index: index,

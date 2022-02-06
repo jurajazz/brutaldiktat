@@ -14,6 +14,8 @@ import * as PHASES from './phases.js'
 // list of letters
 var letters = [] // list of objects LETTER.Letter
 var elapsed=0 // total elapsed time for animations
+var timeline = [] // zaznami o case, kedi boli wildcardi viplnene
+var timeline_start = performance.now() // cas zobrazenia
 
 var application=null; // napriklad diktatApp
 var gameScreen;
@@ -21,6 +23,7 @@ var textContainer;
 
 var currentCursorIndex = 0
 var cursor_graphics = null // object of CURSOR.Cursor
+var used_font_size = 1
 
 var ticker = false // true ak uz je antivni
 
@@ -233,8 +236,14 @@ function setCurrentPositionChar(char)
 
 	let l = getWildcardLetterWithIndex(currentCursorIndex)
 	let letter = l.getStructure()
+	var timerecord={}
+	timerecord['i']=currentCursorIndex
+	timerecord['ch']=char
+	timerecord['ms']=Math.round(performance.now()-timeline_start)
+	timeline.push(timerecord)
 	letter.is_selected=true
 	letter.is_selection_ypsilon=false
+	letter.answer=char
 	if (char == 'y')
 		letter.is_selection_ypsilon=true
 }
@@ -242,6 +251,7 @@ function setCurrentPositionChar(char)
 function showCursor()
 {
 	cursor_graphics = new CURSOR.Cursor()
+	cursor_graphics.setSize(used_font_size / cursor_graphics.getDefaultSizePix())
 	textContainer.addChild(cursor_graphics.getBox())
 }
 
@@ -284,6 +294,8 @@ export function showGameScreen()
 	showButtons()
 	cursorGotoCurrentPosition()
 	if (TEXT.TESTING_FILL_ALL_I) buttonSetAllToIClicked()
+	timeline_start = performance.now()
+	timeline = [] // vimazanie casoveho zaznamu
 }
 
 function showIntroScreen()
@@ -356,9 +368,11 @@ export function checkIfAllLettersAreFilled()
 }
 
 // funkcia vyhodnoti, ktore pismena su dobre a ktore zle
+var number_of_errors=0
 function evaluateCorrectness()
 {
 	var some_undecided_letter_found=0
+	number_of_errors = 0
 	letters.forEach((l, index) =>
 	{
 		let letter = l.getStructure()
@@ -370,8 +384,55 @@ function evaluateCorrectness()
 		if (!letter.is_selection_ypsilon && !letter.should_be_ypsilon) correct=true
 		if (!letter.is_selection_ypsilon && TEXT.is_new_orthography) correct=true
 		letter.is_correct = correct
+		if (!correct) number_of_errors += 1
 	})
 	markCorrectLetters()
+}
+
+export function getNumberOfMistakes()
+{
+	return number_of_errors
+}
+export function getWords()
+{
+	return wordListJoined
+}
+export function getWordsWithAnswers()
+{
+	var words = ''
+	letters.forEach((l, index) =>
+	{
+		let letter = l.getStructure()
+		words += letter.answer
+	})
+	return words
+}
+export function getListOfWildcards()
+{
+	var mistakes=[]
+	letters.forEach((l, index) =>
+	{
+		let letter = l.getStructure()
+		if (!letter.is_wildcard) return
+		if (!letter.is_selected) return
+		if (letter.is_correct) return
+		var wc={}
+		wc['id']=index
+		if (letter.should_be_ypsilon)
+		{
+			wc['char']='y'
+		}
+		else
+		{
+			wc['char']='i'
+		}
+		mistakes.push(wc)
+	})
+	return {mistakes:mistakes}
+}
+export function getTimeline()
+{
+	return {wildcards:timeline}
 }
 
 function addMark(letter, is_correct)
@@ -432,6 +493,8 @@ function cursorGotoPreviousPosition()
 	cursorGotoCurrentPosition()
 }
 
+var wordListJoined=''
+
 function showText()
 {
 	textContainer.removeChildren()
@@ -440,7 +503,7 @@ function showText()
 	currentCursorIndex = 0
 	// generovanie textu
 	var wordListChallenge = TEXT.generateNewText()
-	var wordListJoined = wordListChallenge.join(', ')
+	wordListJoined = wordListChallenge.join(', ')
 	console.log("GenText: "+wordListJoined)
 	// skus ulozit slova tak, abi sa zmestili a pritom viplnali priestor
 	let max_size=70
@@ -457,6 +520,7 @@ function showText()
 			{
 				letters=[]
 				LETTER.enableRender()
+				used_font_size = font_size
 				TEXT.placeLetters(wordListJoined,letters,textContainer,font_size)
 				break;
 			}
