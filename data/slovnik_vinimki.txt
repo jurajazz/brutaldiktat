@@ -60,3 +60,7 @@
 	vycizelované	https://www.kvizy.eu/slovensky-jazyk/identifikacia-slova?nezname_slovo=vycizelovan%C3%BD
 	Manželkine	https://www.kvizy.eu/slovensky-jazyk/tvary-slova/manželkin
 	vytypované	https://jazykovaporadna.sme.sk/q/3121/
+	acylpyrínovými	https://sk.wiktionary.org/wiki/acylpyr%C3%ADn
+	húkajúcimi
+	hniezdiacich
+	
