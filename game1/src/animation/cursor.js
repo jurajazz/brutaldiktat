@@ -17,9 +17,13 @@ export class Cursor
 		var box=this.box;
 		box.beginFill(0xf0c020);
 		box.lineStyle(3, 0xffff00, 5);
-		box.drawRoundedRect(0, 0, 50, 30, 10);
+		box.drawRoundedRect(0, 0, this.getDefaultSizePix(), this.getDefaultSizePix(), 10);
 		box.endFill();
 		box.alpha = 0.5
+	}
+	getDefaultSizePix()
+	{
+		return 40
 	}
 	getBox()
 	{
