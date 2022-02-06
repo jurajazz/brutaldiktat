@@ -495,16 +495,20 @@ function cursorGotoPreviousPosition()
 
 var wordListJoined=''
 
+export function generateNewText()
+{
+	// generovanie textu
+	var wordListChallenge = TEXT.generateNewText()
+	wordListJoined = wordListChallenge.join(', ')
+	console.log("generateNewText: "+wordListJoined)
+}
+
 function showText()
 {
 	textContainer.removeChildren()
 	showBackground()
 	elapsed = 0
 	currentCursorIndex = 0
-	// generovanie textu
-	var wordListChallenge = TEXT.generateNewText()
-	wordListJoined = wordListChallenge.join(', ')
-	console.log("GenText: "+wordListJoined)
 	// skus ulozit slova tak, abi sa zmestili a pritom viplnali priestor
 	let max_size=70
 	let min_size=10

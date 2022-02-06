@@ -56,12 +56,16 @@ function goPhase(new_phase)
 		case PHASES.PHASE_ENTERING_LETTERS:
 			SCREEN_INTRO.hide()
 			SCREEN_DIKTAT.initialize(diktatApp)
+			if (SCREEN_DIKTAT.getWords() == '' || !TEXT.is_new_orthography)
+			{
+				SCREEN_DIKTAT.generateNewText()
+			}
 			SCREEN_DIKTAT.showGameScreen()
 			SCREEN_DIKTAT.buttonNextPhase.addEventListeners(
 				['mousedown', 'tap'], buttonNextPhaseClicked)
 			break
 		case PHASES.PHASE_SHOWING_RESULTS:
-			SCREEN_DIKTAT.showCorrectnessResults() 
+			SCREEN_DIKTAT.showCorrectnessResults()
 			// uzivatel viplnil vsetki pismena
 			var data =
 			{
