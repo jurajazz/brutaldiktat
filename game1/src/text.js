@@ -16,19 +16,31 @@ export function setNewOrthography(is_new)
 	is_new_orthography = is_new
 }
 
-function pickRandomWord(database) {
-	let selectedWord = database.data.slova[Math.floor(Math.random() * database.data.slova.length)]
+function pickRandomWord()
+{
+	let selectedWord = diktatData.data.slova[Math.floor(Math.random() * diktatData.data.slova.length)]
 	return selectedWord.slovo
+}
+
+function pickRandomSentence()
+{
+	return diktatData.data.veti[Math.floor(Math.random() * diktatData.data.veti.length)]['veta']
 }
 
 export function generateNewText ()
 {
 	// generovanie zoznamu slov
 	const wordList = []
-	while (wordList.length < 20)
+	let selectedSentence = pickRandomSentence()
+	console.log("veta"+selectedSentence)
+	wordList.push(selectedSentence)
+	if (0)
 	{
-		let word = pickRandomWord(diktatData)
-		if (!wordList.includes(word)) wordList.push(word)
+		while (wordList.length < 5)
+		{
+			let word = pickRandomWord()
+			if (!wordList.includes(word)) wordList.push(word)
+		}
 	}
 	var wordListChallenge=[];
 	wordList.forEach(
