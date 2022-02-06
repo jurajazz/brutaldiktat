@@ -5,11 +5,11 @@ export const buttonText = {
     fontSize: 24,
     fontWeight: "bold",
     //fontStyle: 'italic',
-    fill: 0x66A0CC,
+    fill: 0xffffff,
     //stroke: '#66A0CC',
     //strokeThickness: 1,
     align: 'center'
 }
 
-export const buttonBackGround = 0xC0C0C0
+export const buttonBackGround = 0x66A0CC
 export const colorWildCardLetter = 0x66A0CC
