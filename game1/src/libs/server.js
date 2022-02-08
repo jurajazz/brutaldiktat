@@ -25,7 +25,6 @@ export function post(data)
 {
 	var xhr = new XMLHttpRequest();
 	var server_url = "https://ypsilon.sk/brutaldiktat/stat.php"
-	//console.log("XMLHttpRequest url:"+server_url)
 	//var server_url = "http://localhost:8080/stat.php"
 	xhr.open("POST", server_url, true);
 	xhr.setRequestHeader('Content-Type', 'application/json');
