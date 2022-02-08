@@ -10,6 +10,8 @@ import * as PHASES from './phases.js'
 import * as TEXT from './text'
 import * as SERVER from './libs/server'
 
+var simple_survey_mode = false // zobrazuje veti v starom pravopise bez hodnotenia. Len uklada visledki
+
 // Create the application helper and add its render target to the page
 let diktatApp = new PIXI.Application({
 	resizeTo: window,
@@ -67,12 +69,15 @@ function goPhase(new_phase)
 		case PHASES.PHASE_SHOWING_RESULTS:
 			SCREEN_DIKTAT.showCorrectnessResults()
 			// uzivatel viplnil vsetki pismena
+			var ortography='y2000'
+			if (TEXT.is_new_orthography) ortography='jednoi2017'
 			var data =
 			{
 				data:
 				{
-					novi_pravopis: TEXT.is_new_orthography,
+					pravopis: ortography,
 					veta: SCREEN_DIKTAT.getWords(),
+					vetahash: SCREEN_DIKTAT.getWordsHash(),
 					viplnena: SCREEN_DIKTAT.getWordsWithAnswers(),
 					chibi: SCREEN_DIKTAT.getNumberOfMistakes(),
 					zoznam_iy: SCREEN_DIKTAT.getListOfWildcards(),
@@ -80,15 +85,22 @@ function goPhase(new_phase)
 				}
 			}
 			SERVER.post(data)
-			if (TEXT.is_new_orthography)
+			if (simple_survey_mode)
 			{
-				SCREEN_DIKTAT.buttonNextPhase.setText("Zobraziť vyhodnotenie")
+				goPhase(PHASES.PHASE_ENTERING_LETTERS)
 			}
 			else
 			{
-				SCREEN_DIKTAT.buttonNextPhase.setText("Skúsiť nový pravopis")
+				if (TEXT.is_new_orthography)
+				{
+					SCREEN_DIKTAT.buttonNextPhase.setText("Zobraziť vyhodnotenie")
+				}
+				else
+				{
+					SCREEN_DIKTAT.buttonNextPhase.setText("Skúsiť nový pravopis")
+				}
+				SCREEN_DIKTAT.buttonNextPhase.alpha = 1
 			}
-			SCREEN_DIKTAT.buttonNextPhase.alpha = 1
 			break
 		case PHASES.PHASE_SHOWING_HIGH_SCORE:
 			SCREEN_DIKTAT.hide()
