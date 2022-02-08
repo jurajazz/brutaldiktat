@@ -15,6 +15,20 @@ diktat = YAML.load_file(diktat_file)
 diktat or error "Nepodarilo sa nacitat #{slovnik_file}";
 #puts diktat.inspect
 
+len_vypis=false
+
+if len_vypis
+	diktat['data']['veti'].each do |veta_rec|
+		veta = veta_rec['veta']
+		puts veta
+	end
+	diktat['data']['slova'].each do |slovo_rec|
+		slovo = slovo_rec['slovo']
+		print slovo+', '
+	end
+	exit
+end
+
 puts "Citam slovnik..."
 slovnik_file='../../data/slovnik.txt';
 slovnik_vinimki_file='../../data/slovnik_vinimki.txt';
