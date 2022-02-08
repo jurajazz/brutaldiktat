@@ -10,6 +10,7 @@ import * as TEXT from './text'
 import * as CURSOR from './animation/cursor'
 import * as LETTER from './animation/letter'
 import * as PHASES from './phases.js'
+import * as HASHES from './libs/hashes.js'
 
 // list of letters
 var letters = [] // list of objects LETTER.Letter
@@ -331,7 +332,7 @@ function cursorGotoCurrentPosition()
 	if (l!=0)
 	{
 		let letter = l.getStructure()
-		cursor_graphics.startMove(letter.sprite.x, letter.sprite.y)
+		cursor_graphics.startMove(letter.sprite.x, letter.sprite.y+used_font_size*0.1)
 	}
 }
 
@@ -397,6 +398,15 @@ export function getWords()
 {
 	return wordListJoined
 }
+
+export function getWordsHash()
+{
+	//var h = sha256(getWords())
+	var h = HASHES.cyrb53(getWords())
+	console.log("getWordsHash dig:"+h)
+	return h;
+}
+
 export function getWordsWithAnswers()
 {
 	var words = ''
@@ -448,7 +458,7 @@ function addMark(letter, is_correct)
 	if (is_correct) color = 0x00ff00
 	box.beginFill(color);
 	//box.lineStyle(3, color, 5);
-	var size=15
+	var size=used_font_size*0.5
 	box.drawCircle(letter.sprite.x, letter.sprite.y, size);
 	box.endFill();
 	box.alpha = 0.2
@@ -544,6 +554,9 @@ function addLetterToContainer(letter)
 	if (letter.getStructure().is_wildcard)
 	{
 		textContainer.addChild(letter.getStructure().sprite2);
+		var sq = letter.getStructure().square;
+		if (sq)
+			textContainer.addChild(sq);
 	}
 }
 
