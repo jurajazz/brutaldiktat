@@ -27,7 +27,7 @@ function pickRandomSentence()
 	return diktatData.data.veti[Math.floor(Math.random() * diktatData.data.veti.length)]['veta']
 }
 
-export function generateNewText ()
+export function generateNewText(user_profile)
 {
 	// generovanie zoznamu slov
 	const wordList = []

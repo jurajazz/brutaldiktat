@@ -11,8 +11,9 @@ import * as TEXT from './text'
 import * as SERVER from './libs/server'
 
 var simple_survey_mode = false // zobrazuje veti v starom pravopise bez hodnotenia. Len uklada visledki
+var user_profile // struktura, ktora je naparsovana zo serveru z odpovede na SERVER.send_request_for_user_profile_from_server
 
-// Create the application helper and add its render target to the page
+// hlavni aplikacni objekt
 let diktatApp = new PIXI.Application({
 	resizeTo: window,
 	antialias: true, // graphics RoundRectangle/drawRoundedRect
@@ -58,9 +59,11 @@ function goPhase(new_phase)
 		case PHASES.PHASE_ENTERING_LETTERS:
 			SCREEN_INTRO.hide()
 			SCREEN_DIKTAT.initialize(diktatApp)
+			user_profile = SERVER.get_user_profile()
+			console.log("User Profile:"+user_profile)
 			if (SCREEN_DIKTAT.getWords() == '' || !TEXT.is_new_orthography)
 			{
-				SCREEN_DIKTAT.generateNewText()
+				SCREEN_DIKTAT.generateNewText(user_profile)
 			}
 			SCREEN_DIKTAT.showGameScreen()
 			SCREEN_DIKTAT.buttonNextPhase.addEventListeners(
@@ -77,14 +80,14 @@ function goPhase(new_phase)
 				{
 					pravopis: ortography,
 					veta: SCREEN_DIKTAT.getWords(),
-					vetahash: SCREEN_DIKTAT.getWordsHash(),
+					slova_hash: SCREEN_DIKTAT.getWordsHash(),
 					viplnena: SCREEN_DIKTAT.getWordsWithAnswers(),
 					chibi: SCREEN_DIKTAT.getNumberOfMistakes(),
 					zoznam_iy: SCREEN_DIKTAT.getListOfWildcards(),
 					priebeh: SCREEN_DIKTAT.getTimeline(),
 				}
 			}
-			SERVER.post(data)
+			SERVER.post('sentence_record',data,SCREEN_DIKTAT.getWordsHash())
 			if (simple_survey_mode)
 			{
 				goPhase(PHASES.PHASE_ENTERING_LETTERS)
@@ -111,6 +114,7 @@ function goPhase(new_phase)
 }
 
 // spusti hru
+SERVER.send_request_for_user_profile_from_server()
 addPollers()
 goPhase(PHASES.PHASE_INTRO_SCREEN)
 //goPhase(PHASES.PHASE_ENTERING_LETTERS)

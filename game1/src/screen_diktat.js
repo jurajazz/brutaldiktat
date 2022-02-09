@@ -505,10 +505,10 @@ function cursorGotoPreviousPosition()
 
 var wordListJoined=''
 
-export function generateNewText()
+export function generateNewText(user_profile)
 {
 	// generovanie textu
-	var wordListChallenge = TEXT.generateNewText()
+	var wordListChallenge = TEXT.generateNewText(user_profile)
 	wordListJoined = wordListChallenge.join(', ')
 	console.log("generateNewText: "+wordListJoined)
 }
