@@ -4,7 +4,16 @@ var user_profile_data_json = '' // will be filled by HTTP get request later
 export function get_user_profile()
 {
 	//user_profile_data_json = '{"count":2,"hashes":["27","33"]}' // for testing
-	return JSON.parse(user_profile_data_json)
+	// user_profile_data_json = 'abrakadabra'
+	try
+	{
+		data = JSON.parse(user_profile_data_json)
+		return data
+	}
+	catch (error)
+	{
+		console.log("Server response error ("+error+") parsing response:"+user_profile_data_json)
+	}
 }
 
 export function gen_new_user_id()
