@@ -18,6 +18,10 @@ export function setUseSquares(squares)
 {
 	use_squares = squares
 }
+export function getUseSquares(squares)
+{
+	return use_squares
+}
 
 export class Letter
 {
@@ -28,6 +32,8 @@ export class Letter
 			sprite2: null,
 			square: null,
 			char: char,
+			x: 0,
+			y: 0,
 			answer: char,
 			is_wildcard: is_wildcard,
 			is_long: is_long,
@@ -115,7 +121,7 @@ export class Letter
 				s.alpha = letter.alpha_max_selected
 			else
 				s2.alpha = letter.alpha_max_selected
-			if (use_squares)
+			if (use_squares && letter.square)
 				letter.square.alpha = 0
 		}
 		else
@@ -125,8 +131,11 @@ export class Letter
 			s2.angle = angle
 			if (use_squares)
 			{
-				sq.alpha = letter.alpha_max_selected
-				sq.angle = angle
+				if (sq)
+				{
+					sq.alpha = letter.alpha_max_selected
+					sq.angle = angle
+				}
 				s.alpha = 0
 				s2.alpha = 0
 			}
@@ -160,8 +169,22 @@ export class Letter
 			//s.scale.set(alpha)
 		}
 	}
+	getChar()
+	{
+		return this.structure.char
+	}
+	getPositionX()
+	{
+		return this.structure.x
+	}
+	getPositionY()
+	{
+		return this.structure.y
+	}
 	setPosition(x,y)
 	{
+		this.structure.x = x
+		this.structure.y = y
 		if (!render_enabled) return
 		var s=this.structure.sprite
 		var s2=this.structure.sprite2
