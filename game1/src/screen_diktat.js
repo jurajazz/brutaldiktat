@@ -12,6 +12,7 @@ import * as LETTER from './animation/letter'
 import * as PHASES from './phases.js'
 import * as HASHES from './libs/hashes.js'
 
+var TIME_PER_WILDCARD_LETTER = 2.5
 // list of letters
 var letters = [] // list of objects LETTER.Letter
 var elapsed=0 // total elapsed time for animations
@@ -20,6 +21,7 @@ var timeline_start = performance.now() // cas zobrazenia
 var gameScreen;
 var application=null; // napriklad diktatApp
 var textContainer;
+var game_finished=false
 
 var currentCursorIndex = 0
 var cursor_graphics = null // object of CURSOR.Cursor
@@ -65,19 +67,27 @@ export function setUseSquares(value)
 }
 export function getUseSquares(value)
 {
-	LETTER.getUseSquares(value)
+	return LETTER.getUseSquares()
 }
 
 var back_progress
 var progress
+var progress_container
 var progress_label
+var time_available=15
+var stress_start_time = performance.now()
+var stress_end_time = performance.now()
 
-function showProgress()
+function showStressBar() // v pripade prieskumu: progressBar
 {
+	stress_start_time = performance.now()
+	game_finished = false
 	var sentence_count = TEXT.getSentencesFilledCount()
+	var text = ''
+	var progress_size_relative = 1
+	var progress_color = 0xbbdd77
 	if (PHASES.isSimpleSurveyModeActive())
 	{
-		var text = ''
 		var start = ''
 		switch (sentence_count)
 		{
@@ -97,66 +107,73 @@ function showProgress()
 				break
 		}
 		text = start+sentence_count+' '+ text + ' z ' + TEXT.getSentencesTotalCount()
-
-		var ypos = -screen_height*0.5 + screen_height*0.12
-		var fontsize = screen_height*0.05
-		if (!horizontal_mode)
-		{
-			ypos = -screen_height*0.5 + screen_height*0.17
-		}
-		progress_label = new PIXI.Text(text,
-		{ fontFamily : STYLES.fontFamily,
-			fontSize: fontsize,
-			fill : STYLES.progressFontColor,
-			align : 'center'})
-		progress_label.y = ypos
-		progress_label.x = -progress_label.width/2
-		//progress_label.x = -progress_label.width/2 - screen_width/2 + screen_width*0.1
-
-		back_progress = new PIXI.Graphics();
-		progress = new PIXI.Graphics();
-		back_progress.beginFill(0xffffff);
-		//progress.beginFill(0xddbb77); // oranzova
-		progress.beginFill(0xbbdd77); // zelena
-		var margin_in = screen_width*0.005
-		//back_progress.lineStyle(3, 0xffffff, 5);
-		if (horizontal_mode)
-		{
-			var margin_w = screen_width*0.2
-			back_progress.drawRoundedRect(
-				-screen_width*0.5+margin_w,
-				ypos,
-				screen_width-margin_w*2,
-				screen_height*0.07,
-				5);
-			progress.drawRoundedRect(
-				-screen_width*0.5+margin_w+margin_in,
-				ypos+margin_in,
-				(screen_width-margin_w*2-margin_in*2)*(sentence_count/TEXT.getSentencesTotalCount()),
-				screen_height*0.07-margin_in*2,
-				5);
-		}
-		else
-		{
-			var margin_w = screen_width*0.05
-			back_progress.drawRoundedRect(
-				-screen_width*0.5+margin_w,
-				ypos,
-				screen_width-margin_w*2,
-				screen_height*0.07,
-				10);
-			progress.drawRoundedRect(
-				-screen_width*0.5+margin_w+margin_in,
-				ypos+margin_in,
-				(screen_width-margin_w*2-margin_in)*(sentence_count/TEXT.getSentencesTotalCount()),
-				screen_height*0.07-margin_in*2,
-				5);
-		}
-		back_progress.endFill();
-		gameScreen.addChild(back_progress);
-		gameScreen.addChild(progress);
-		gameScreen.addChild(progress_label);
+		progress_size_relative = (sentence_count/TEXT.getSentencesTotalCount())
 	}
+	else
+	{
+		text = 'Zostáva '+time_available+' s'
+		progress_color = 0xe0e0e0
+	}
+	var ypos = -screen_height*0.5 + screen_height*0.12
+	var fontsize = screen_height*0.05
+	if (!horizontal_mode)
+	{
+		ypos = -screen_height*0.5 + screen_height*0.17
+	}
+	progress_label = new PIXI.Text(text,
+	{ fontFamily : STYLES.fontFamily,
+		fontSize: fontsize,
+		fill : STYLES.progressFontColor,
+	})
+	progress_label.anchor.set(0.5,0)
+	progress_label.y = ypos
+
+	back_progress = new PIXI.Graphics();
+	progress_container = new PIXI.Container();
+	progress = new PIXI.Graphics();
+	back_progress.beginFill(0xffffff);
+	//progress.beginFill(0xddbb77); // oranzova
+
+	progress.beginFill(progress_color); // zelena
+	var margin_in = screen_width*0.005
+	//back_progress.lineStyle(3, 0xffffff, 5);
+	if (horizontal_mode)
+	{
+		var margin_w = screen_width*0.2
+		back_progress.drawRoundedRect(
+			-screen_width*0.5+margin_w,
+			ypos,
+			screen_width-margin_w*2,
+			screen_height*0.07,
+			5);
+		progress.drawRoundedRect(
+			-screen_width*0.5+margin_w+margin_in,
+			ypos+margin_in,
+			(screen_width-margin_w*2-margin_in*2)*progress_size_relative,
+			screen_height*0.07-margin_in*2,
+			5);
+	}
+	else
+	{
+		var margin_w = screen_width*0.05
+		back_progress.drawRoundedRect(
+			-screen_width*0.5+margin_w,
+			ypos,
+			screen_width-margin_w*2,
+			screen_height*0.07,
+			10);
+		progress.drawRoundedRect(
+			-screen_width*0.5+margin_w+margin_in,
+			ypos+margin_in,
+			(screen_width-margin_w*2-margin_in)*progress_size_relative,
+			screen_height*0.07-margin_in*2,
+			5);
+	}
+	back_progress.endFill();
+	gameScreen.addChild(back_progress);
+	progress_container.addChild(progress);
+	gameScreen.addChild(progress_container)
+	gameScreen.addChild(progress_label);
 }
 
 function showMainLabel()
@@ -400,7 +417,7 @@ export function showGameScreen()
 {
 	gameScreen.removeChildren()
 	showMainLabel()
-	showProgress()
+	showStressBar()
 	showText()
 	showCursor()
 	showButtons()
@@ -606,6 +623,10 @@ function cursorGotoNextPosition()
 {
 	currentCursorIndex++
 	cursorGotoCurrentPosition()
+	if (checkIfAllLettersAreFilled())
+	{
+		gameFinishedAllFilled()
+	}
 }
 
 function cursorGotoPreviousPosition()
@@ -652,6 +673,7 @@ function showText()
 		}
 		//console.log("Drawing letters:"+(performance.now()-dstart)+"ms")
 	}
+	time_available=0
 	letters.forEach(addLetterToContainer);
 	// nastav polohu nedefinovanich pismen
 	letters.forEach(setLettersPosition);
@@ -663,6 +685,7 @@ function addLetterToContainer(letter)
 	textContainer.addChild(letter.getStructure().sprite);
 	if (letter.getStructure().is_wildcard)
 	{
+		time_available += TIME_PER_WILDCARD_LETTER
 		textContainer.addChild(letter.getStructure().sprite2);
 		var sq = letter.getStructure().square;
 		if (sq)
@@ -678,7 +701,8 @@ function addAnimations()
 			// pohibuj so zatial nedefinovanimi pismenami
 			letters.forEach(animateLetter);
 			animateTextContainer();
-			animateProgressBar();
+			if (PHASES.isSimpleSurveyModeActive()) animateProgressBar();
+			if (!PHASES.isSimpleSurveyModeActive()) animateStressBar();
 			if (cursor_graphics) cursor_graphics.animate(elapsed);
 			if (PHASES.PHASE_SHOWING_RESULTS == PHASES.phase) letters.forEach(animateMark);
 	})
@@ -691,25 +715,78 @@ function animateMark(letter) {letter.animateMark(elapsed) }
 
 function animateProgressBar()
 {
-	if (PHASES.isSimpleSurveyModeActive())
+	let max_frames=200
+	if (elapsed<max_frames)
 	{
-		let max_frames=200
-		if (elapsed<max_frames)
-		{
-			let scaley=1+0.01*Math.cos(elapsed / 20.0)
-			let scalex=1+0.01*Math.cos(elapsed / 15.0)
-			//back_progress.scale.set(scalex,scaley)
-			//progress.scale.set(scalex,scaley)
-			let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / max_frames))
-			progress.alpha = alpha1
-			back_progress.alpha = alpha1
-		}
-		let label_frames=100
-		if (elapsed<label_frames)
-		{
-			let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / label_frames))
-			progress_label.alpha = alpha1
-		}
+		let scaley=1+0.01*Math.cos(elapsed / 20.0)
+		let scalex=1+0.01*Math.cos(elapsed / 15.0)
+		//back_progress.scale.set(scalex,scaley)
+		//progress.scale.set(scalex,scaley)
+		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / max_frames))
+		progress.alpha = alpha1
+		back_progress.alpha = alpha1
+	}
+	let label_frames=100
+	if (elapsed<label_frames)
+	{
+		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / label_frames))
+		progress_label.alpha = alpha1
+	}
+}
+
+function gameFinishedAllFilled()
+{
+	game_finished = true
+}
+
+function animateStressBar()
+{
+	var total_ms = 1000*time_available
+	if (!game_finished)
+		stress_end_time = performance.now()
+	var remaining_ms = total_ms - (stress_end_time - stress_start_time)
+	if (remaining_ms<0) remaining_ms=0
+	var relative_time = remaining_ms/total_ms
+	if (relative_time)
+		progress_label.text = 'Zostáva '+Math.round(remaining_ms/1000)+' s'
+	else
+		progress_label.text = 'Nestihli ste to!'
+	if (remaining_ms < 10000)
+	{
+		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / 30))
+		progress_label.style.fill = '#FF0000'
+		progress_label.alpha = alpha1
+	}
+	if (remaining_ms < 5000)
+	{
+		let alpha2 = 0.5-0.5*Math.cos(3.14*(elapsed / 10))
+		progress.alpha = alpha2
+	}
+	var margin_in = screen_width*0.005
+	var margin_w = 0
+	var width = screen_width*0.8*relative_time
+	if (horizontal_mode)
+	{
+		margin_w = screen_width*0.15
+		width = screen_width*0.6*relative_time
+	}
+	progress_container.width = width
+	progress_container.x = progress_container.width*0.5-screen_width*0.45+margin_in+margin_w
+	//progress.width = 15 //100*(remaining_ms/total_ms)
+	let max_frames=50
+	if (elapsed<max_frames)
+	{
+		let scaley=1+0.01*Math.cos(elapsed / 20.0)
+		let scalex=1+0.01*Math.cos(elapsed / 15.0)
+		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / max_frames))
+		progress.alpha = alpha1
+		back_progress.alpha = alpha1
+	}
+	let label_frames=100
+	if (elapsed<label_frames)
+	{
+		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / label_frames))
+		progress_label.alpha = alpha1
 	}
 }
 
