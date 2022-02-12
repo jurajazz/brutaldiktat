@@ -2,6 +2,7 @@ import diktatData from "../assets/diktat-data.yaml"
 import * as PIXI from 'pixi.js'
 import * as LETTER from './animation/letter'
 import * as STYLES from './styles'
+import * as HASHES from './libs/hashes.js'
 
 export const KTOREKOLVEK_IY_KRATKE = 'ǒ'
 export const KTOREKOLVEK_IY_DLHE = 'Ǒ'
@@ -10,6 +11,19 @@ export const TESTING_FILL_ALL_I = false
 export var is_new_orthography = false
 var cacheLetterWidths = {}
 var cached_font_size = 100
+var sentences_total_count = 0
+var sentences_filled_count = 0
+var last_sentence_picked
+
+export function getSentencesTotalCount()
+{
+	return sentences_total_count
+}
+
+export function getSentencesFilledCount()
+{
+	return sentences_filled_count
+}
 
 export function setNewOrthography(is_new)
 {
@@ -24,14 +38,90 @@ function pickRandomWord()
 
 function pickRandomSentence()
 {
-	return diktatData.data.veti[Math.floor(Math.random() * diktatData.data.veti.length)]['veta']
+	return diktatData.data.veti[Math.floor(Math.random() * diktatData.data.veti.length)]
+}
+
+function pickUnusedSentence()
+{
+	var non_used_found=0
+	diktatData.data.veti.forEach
+	(
+		(item) =>
+		{
+			//console.log("Checked:"+item['veta']+" Hash:"+item['hash'])
+			if (!item['filled'])
+			{
+				non_used_found++
+				//console.log("Checked:"+item['veta']+" Hash:"+item['hash'])
+			}
+		}
+	)
+	sentences_filled_count = sentences_total_count-non_used_found
+	console.log('Non used found:'+non_used_found)
+	if (non_used_found>0)
+	{
+		var id = Math.floor(Math.random() * non_used_found)
+		last_sentence_picked = diktatData.data.veti[id]
+	}
+	else
+	{
+		// vsetki veti su uz viplnene, skusme nejaku nahodnu
+		console.log('Vsetki su uz najdene - skusme random')
+		last_sentence_picked = pickRandomSentence()
+	}
+	return last_sentence_picked
+}
+
+export function markLastSentenceAsFilled()
+{
+	last_sentence_picked['filled']=1
+}
+
+export function calculateSentencesHash()
+{
+	sentences_total_count = diktatData.data.veti.length
+	diktatData.data.veti.forEach
+	(
+		(item) =>
+		{
+			item['hash'] = HASHES.cyrb53(item['veta'])
+			//console.log("Sent:"+item['veta']+" Hash:"+item['hash'])
+		}
+	)
+}
+
+export function markSentencesFilledByProfile(user_profile)
+{
+	// make index
+	var filled_hashes=[]
+	sentences_filled_count = 0
+	if (!user_profile)
+	{
+		return
+	}
+	console.log("markSentencesFilledByProfile:"+user_profile)
+	user_profile['sentences']['hashes'].forEach ( (hash) => {
+		filled_hashes[hash] = 1
+		console.log("UsedHash:"+hash)
+	})
+	diktatData.data.veti.forEach ( (item) => {
+			if (filled_hashes[item['hash']] == 1)
+			{
+				item['filled'] = 1
+				sentences_filled_count += 1
+				console.log("FilledBefore:"+item['veta']+" Hash:"+item['hash'])
+			}
+		}
+	)
+	console.log("SentencesFilledBefore:"+sentences_filled_count)
 }
 
 export function generateNewText(user_profile)
 {
 	// generovanie zoznamu slov
 	const wordList = []
-	let selectedSentence = pickRandomSentence()
+	let selectedData = pickUnusedSentence()
+	var selectedSentence = selectedData['veta']
 	console.log("veta"+selectedSentence)
 	wordList.push(selectedSentence)
 	if (0)
@@ -85,7 +175,7 @@ export function placeLetters(wordListJoined,letters,textContainer,font_size)
 	let rightx=textContainer.width*0.45
 	let bottomy=textContainer.height*0.45
 	let basex=leftx
-	let basey=-textContainer.position.y/2
+	let basey=-textContainer.position.y/2+font_size*0.5
 	let index=0;
 	let width_scale=0.9
 	for (let i = 0; i < wordListJoined.length; i++)
@@ -129,11 +219,16 @@ export function placeLetters(wordListJoined,letters,textContainer,font_size)
 			// hladaj poslednu medzeru
 			let pocetPismenNaPresun=0;
 			let id=i;
-			while (letters[id].getStructure().char!=' ')
+			while (letters[id].getChar()!=' ')
 			{
 				id--;
 				pocetPismenNaPresun++;
 				if (id==0) break; // ak bi tam nahodou nebola
+				if (letters[id].getPositionY() != basey)
+				{
+					//console.log("Slovo je viac siroke, ako riadok.")
+					return false
+				}
 			}
 			if (pocetPismenNaPresun>0) id++;
 			// posun slovo z predchadzajuceho riadku na novi riadok
