@@ -10,6 +10,7 @@ import * as TEXT from './text'
 import * as CURSOR from './animation/cursor'
 import * as LETTER from './animation/letter'
 import * as PHASES from './phases.js'
+import * as CONNECT from './libs/connect'
 
 // list of letters
 var letters = [] // list of objects LETTER.Letter
@@ -172,15 +173,21 @@ function addAnimations()
 			if (cursor_graphics) cursor_graphics.animate(elapsed)
 			//if (PHASES.PHASE_SHOWING_RESULTS == PHASES.phase) letters.forEach(animateMark);
 			animateCursor(elapsed)
-			if (!buttons_shown && elapsed*application.ticker.deltaMS > timeout_for_server_response_ticks && PHASES.is(PHASES.PHASE_INTRO_SCREEN))
+			if (!buttons_shown && PHASES.is(PHASES.PHASE_INTRO_SCREEN))
 			{
-				console.log("Timeout waiting for connection.")
-				buttons_shown = true
-				introScreen.addChild(buttonWithYpsilon)
-				introScreen.addChild(buttonWithoutYpsilon)
+				if (elapsed*application.ticker.deltaMS > timeout_for_server_response_ticks) ShowButtons("Timeout waiting for connection.")
+				if (CONNECT.is_user_profile_received()) ShowButtons("User profile received")
 			}
 	})
 	ticker=true
+}
+
+function ShowButtons(reason)
+{
+	console.log('Show Buttons: '+reason)
+	buttons_shown = true
+	introScreen.addChild(buttonWithYpsilon)
+	introScreen.addChild(buttonWithoutYpsilon)
 }
 
 function animateLetter(letter) { letter.animate(elapsed) }
