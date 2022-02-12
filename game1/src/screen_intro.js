@@ -67,7 +67,7 @@ export function showScreen()
 	const label1 = new PIXI.Text(text_big,
 	{ fontFamily : STYLES.fontFamily,
 		fontSize: fontsize_big,
-		fill : 0x000000,
+		fill : STYLES.bigFontColor,
 		align : 'center'})
 	label1.y = ypos_big
 	label1.x = -label1.width/2 // center
@@ -77,7 +77,7 @@ export function showScreen()
 	var label2 = new PIXI.Text(pravopis,
 	{ fontFamily : STYLES.fontFamily,
 		fontSize: fontsize_small,
-		fill : 0x000000,
+		fill : STYLES.bigFontColor,
 		align : 'center'})
 	label2.y = ypos_small
 	label2.x = -label2.width/2 // center

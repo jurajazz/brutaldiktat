@@ -107,7 +107,7 @@ function showProgress()
 		progress_label = new PIXI.Text(text,
 		{ fontFamily : STYLES.fontFamily,
 			fontSize: fontsize,
-			fill : 0x000000,
+			fill : STYLES.progressFontColor,
 			align : 'center'})
 		progress_label.y = ypos
 		progress_label.x = -progress_label.width/2
@@ -178,7 +178,7 @@ function showMainLabel()
 		const label1 = new PIXI.Text(main_text,
 		{ fontFamily : STYLES.fontFamily,
 			fontSize: fontsize_big,
-			fill : 0x000000,
+			fill : STYLES.bigFontColor,
 			align : 'center'})
 		label1.y = ypos_big
 		label1.x = -label1.width/2 - screen_width/2 + screen_width*0.1
@@ -186,7 +186,7 @@ function showMainLabel()
 		var label2 = new PIXI.Text(small_text,
 		{ fontFamily : STYLES.fontFamily,
 			fontSize: fontsize_small,
-			fill : 0x000000,
+			fill : STYLES.bigFontColor,
 			align : 'center'})
 		label2.y = ypos_small
 		label2.x = -label2.width/2 + screen_width/2 - screen_width*0.1
@@ -205,7 +205,7 @@ function showMainLabel()
 		const label1 = new PIXI.Text(main_text,
 		{ fontFamily : STYLES.fontFamily,
 			fontSize: fontsize_big,
-			fill : 0x000000,
+			fill : STYLES.bigFontColor,
 			align : 'center'})
 		label1.y = ypos_big
 		label1.x = -label1.width/2 // center
@@ -213,7 +213,7 @@ function showMainLabel()
 		var label2 = new PIXI.Text(small_text,
 		{ fontFamily : STYLES.fontFamily,
 			fontSize: fontsize_small,
-			fill : 0x000000,
+			fill : STYLES.bigFontColor,
 			align : 'center'})
 		label2.y = ypos_small
 		label2.x = -label2.width/2 // center
@@ -378,7 +378,7 @@ function showBackground()
 			-screen_width*0.5+margin_w,
 			-screen_height*0.5+screen_height*0.2,
 			screen_width-margin_w*2,
-			screen_height*0.85,
+			screen_height*0.80,
 			10);
 	}
 	else
