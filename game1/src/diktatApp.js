@@ -23,6 +23,19 @@ let diktatApp = new PIXI.Application({
 	forceCanvas: true
 });
 
+// spracovanie parametrov z URL
+{
+	const queryString = window.location.search;
+	console.log('URL params'+queryString);
+	const urlParams = new URLSearchParams(queryString);
+	const survey_only = urlParams.get('iba_prieskum_nie_hra')
+	if ('ano' == survey_only)
+	{
+		console.log('Survey only mode')
+		simple_survey_mode = true
+	}
+}
+
 window.innerHeight = window.innerHeight*0.95 // docasna kompenzacia dolneho bieleho pruhu
 
 window.onresize = function (event){
@@ -59,7 +72,13 @@ function goPhase(new_phase)
 		case PHASES.PHASE_ENTERING_LETTERS:
 			SCREEN_INTRO.hide()
 			SCREEN_DIKTAT.initialize(diktatApp)
+			if (simple_survey_mode)
+			{
+				SCREEN_DIKTAT.setUseSquares(true)
+				SCREEN_DIKTAT.setSimpleSurveyMode()
+			}
 			user_profile = SERVER.get_user_profile()
+			TEXT.markSentencesFilledByProfile(user_profile)
 			console.log("User Profile:"+user_profile)
 			if (SCREEN_DIKTAT.getWords() == '' || !TEXT.is_new_orthography)
 			{
@@ -73,17 +92,20 @@ function goPhase(new_phase)
 			SCREEN_DIKTAT.showCorrectnessResults()
 			// uzivatel viplnil vsetki pismena
 			var ortography='y2000'
+			TEXT.markLastSentenceAsFilled()
 			if (TEXT.is_new_orthography) ortography='jednoi2017'
 			var data =
 			{
 				data:
 				{
 					pravopis: ortography,
+					prieskum: simple_survey_mode,
 					veta: SCREEN_DIKTAT.getWords(),
 					slova_hash: SCREEN_DIKTAT.getWordsHash(),
 					viplnena: SCREEN_DIKTAT.getWordsWithAnswers(),
 					chibi: SCREEN_DIKTAT.getNumberOfMistakes(),
 					zoznam_iy: SCREEN_DIKTAT.getListOfWildcards(),
+					kurzor_stvorec: SCREEN_DIKTAT.setUseSquares(),
 					priebeh: SCREEN_DIKTAT.getTimeline(),
 				}
 			}
@@ -116,7 +138,25 @@ function goPhase(new_phase)
 // spusti hru
 SERVER.send_request_for_user_profile_from_server()
 addPollers()
-goPhase(PHASES.PHASE_INTRO_SCREEN)
+TEXT.calculateSentencesHash()
+if (simple_survey_mode)
+{
+	goPhase(PHASES.PHASE_INTRO_SCREEN)
+	// treba prerobit na asinchronni dizajn - intro screen bude pocas cakania na server zobrazeni
+	var timeout_ms=2000
+	var started=performance.now()
+	while (performance.now()-started < timeout_ms)
+	{
+		if (SERVER.is_user_profile_received()) break
+	}
+	var elapsed_ms = performance.now()-started
+	console.log("Server response waiting:"+elapsed_ms+'ms')
+	goPhase(PHASES.PHASE_ENTERING_LETTERS)
+}
+else
+{
+	goPhase(PHASES.PHASE_INTRO_SCREEN)
+}
 //goPhase(PHASES.PHASE_ENTERING_LETTERS)
 
 var app_elapsed_time=0
