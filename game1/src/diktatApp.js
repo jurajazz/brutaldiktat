@@ -67,6 +67,7 @@ function goPhase(new_phase)
 		case PHASES.PHASE_ENTERING_LETTERS:
 			SCREEN_INTRO.hide()
 			SCREEN_DIKTAT.initialize(diktatApp)
+			SCREEN_DIKTAT.setUseSquares(true)
 			user_profile = CONNECT.get_user_profile()
 			TEXT.markSentencesFilledByProfile(user_profile)
 			console.log("User Profile:"+user_profile)
@@ -95,7 +96,7 @@ function goPhase(new_phase)
 					viplnena: SCREEN_DIKTAT.getWordsWithAnswers(),
 					chibi: SCREEN_DIKTAT.getNumberOfMistakes(),
 					zoznam_iy: SCREEN_DIKTAT.getListOfWildcards(),
-					kurzor_stvorec: SCREEN_DIKTAT.setUseSquares(),
+					kurzor_stvorec: SCREEN_DIKTAT.getUseSquares(),
 					priebeh: SCREEN_DIKTAT.getTimeline(),
 				}
 			}
@@ -108,7 +109,7 @@ function goPhase(new_phase)
 			{
 				if (TEXT.is_new_orthography)
 				{
-					SCREEN_DIKTAT.buttonNextPhase.setText("Zobraziť vyhodnotenie")
+					SCREEN_DIKTAT.buttonNextPhase.setText("Skúsiť inú vetu")
 				}
 				else
 				{
@@ -140,12 +141,17 @@ function addPollers()
 		switch (PHASES.phase)
 		{
 			case PHASES.PHASE_INTRO_SCREEN:
-				if (PHASES.isSimpleSurveyModeActive())
+				if (CONNECT.is_user_profile_received())
 				{
-					if (CONNECT.is_user_profile_received())
+					if (PHASES.isSimpleSurveyModeActive())
 					{
 						goPhase(PHASES.PHASE_ENTERING_LETTERS);
 					}
+				}
+				if (CONNECT.runningLocally())
+				{
+					// pre richle testovanie - intro screen sa preskoci
+					goPhase(PHASES.PHASE_ENTERING_LETTERS);
 				}
 				break
 			case PHASES.PHASE_ENTERING_LETTERS:
@@ -177,8 +183,9 @@ function buttonNextPhaseClicked()
 		if (TEXT.is_new_orthography)
 		{
 			// zobrazit high score
+			TEXT.setNewOrthography(false)
 			SCREEN_DIKTAT.buttonNextPhase.alpha = 0
-			goPhase(PHASES.PHASE_SHOWING_HIGH_SCORE)
+			goPhase(PHASES.PHASE_ENTERING_LETTERS)
 		}
 		else
 		{
