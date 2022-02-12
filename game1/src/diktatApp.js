@@ -28,11 +28,7 @@ let diktatApp = new PIXI.Application({
 	//console.log('URL params'+queryString);
 	const urlParams = new URLSearchParams(queryString);
 	const survey_only = urlParams.get('iba_prieskum_nie_hra')
-	if ('ano' == survey_only)
-	{
-		console.log('Survey only mode')
-		PHASES.setSimpleSurveyMode(true)
-	}
+	if ('ano' == survey_only) PHASES.setSimpleSurveyMode(true)
 }
 
 window.innerHeight = window.innerHeight*0.95 // docasna kompenzacia dolneho bieleho pruhu

@@ -57,7 +57,7 @@ function pickUnusedSentence()
 		}
 	)
 	sentences_filled_count = sentences_total_count-non_used_found
-	console.log('Non used found:'+non_used_found)
+	console.log('Non filled:'+non_used_found)
 	if (non_used_found>0)
 	{
 		var id = Math.floor(Math.random() * non_used_found)
@@ -99,17 +99,17 @@ export function markSentencesFilledByProfile(user_profile)
 	{
 		return
 	}
-	console.log("markSentencesFilledByProfile:"+user_profile)
+	//console.log("markSentencesFilledByProfile:"+user_profile)
 	user_profile['sentences']['hashes'].forEach ( (hash) => {
 		filled_hashes[hash] = 1
-		console.log("UsedHash:"+hash)
+		//console.log("UsedHash:"+hash)
 	})
 	diktatData.data.veti.forEach ( (item) => {
 			if (filled_hashes[item['hash']] == 1)
 			{
 				item['filled'] = 1
 				sentences_filled_count += 1
-				console.log("FilledBefore:"+item['veta']+" Hash:"+item['hash'])
+				//console.log("FilledBefore:"+item['veta']+" Hash:"+item['hash'])
 			}
 		}
 	)
@@ -122,7 +122,7 @@ export function generateNewText(user_profile)
 	const wordList = []
 	let selectedData = pickUnusedSentence()
 	var selectedSentence = selectedData['veta']
-	console.log("veta"+selectedSentence)
+	//console.log("generateNewText"+selectedSentence)
 	wordList.push(selectedSentence)
 	if (0)
 	{

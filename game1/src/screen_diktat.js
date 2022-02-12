@@ -635,7 +635,7 @@ function showText()
 	let min_size=10
 	{
 		var dstart = performance.now();
-		console.log("Drawing letters")
+		//console.log("Drawing letters")
 		LETTER.disableRender()
 		for (let font_size = max_size; font_size > min_size; font_size-=2)
 		{
@@ -649,9 +649,8 @@ function showText()
 				TEXT.placeLetters(wordListJoined,letters,textContainer,font_size)
 				break;
 			}
-			var dend = performance.now();
 		}
-		console.log("Drawing letters EndTime:"+(dend-dstart)+"ms")
+		//console.log("Drawing letters:"+(performance.now()-dstart)+"ms")
 	}
 	letters.forEach(addLetterToContainer);
 	// nastav polohu nedefinovanich pismen
