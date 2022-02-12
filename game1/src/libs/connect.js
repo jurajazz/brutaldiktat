@@ -8,7 +8,11 @@ export function is_user_profile_received()
 }
 export function get_user_profile()
 {
-	//user_profile_data_json='{"nickname":"","sentences":{"count":2,"hashes":["53e4b79af4af5","2ce4327320966"]}}'
+	if (runningLocally())
+	{
+		// simuluj odpoved
+		user_profile_data_json='{"nickname":"","sentences":{"count":2,"hashes":["53e4b79af4af5","2ce4327320966"]}}'
+	}
 	// user_profile_data_json = 'incorrect-data'
 	try
 	{
@@ -42,10 +46,16 @@ export function get_user_id()
 	return user_id
 }
 
+export function runningLocally()
+{
+	const host = window.location.host
+	return ('localhost:8080' == host)
+}
+
 export function post(action,data,hash)
 {
 	var xhr = new XMLHttpRequest();
-	var server_url = "https://ypsilon.sk/brutaldiktat/stat.php"
+	var server_url = "/brutaldiktat/stat.php"
 	// var server_url = "http://localhost:8080/stat.php"
 	xhr.open("POST", server_url, true);
 	xhr.setRequestHeader('Content-Type', 'application/json');
@@ -58,8 +68,13 @@ export function post(action,data,hash)
 // posle poziadavku na server a ked je vibavena, tak cez get_user_profile vycita data
 export function send_request_for_user_profile_from_server()
 {
+	if (runningLocally())
+	{
+		user_profile_received = true
+		return
+	}
 	var xhr = new XMLHttpRequest();
-	var server_url = "https://ypsilon.sk/brutaldiktat/stat.php?action=get_user_profile&user_id="+get_user_id()
+	var server_url = "/brutaldiktat/stat.php?action=get_user_profile&user_id="+get_user_id()
 	xhr.onreadystatechange = function()
 	{
 		if (this.readyState == 4 && this.status == 200)
