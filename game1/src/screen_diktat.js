@@ -17,7 +17,6 @@ var letters = [] // list of objects LETTER.Letter
 var elapsed=0 // total elapsed time for animations
 var timeline = [] // zaznami o case, kedi boli wildcardi viplnene
 var timeline_start = performance.now() // cas zobrazenia
-var simple_survey_mode = false // rezim jednoduchecho prieskumu bez vihodnocovania
 var gameScreen;
 var application=null; // napriklad diktatApp
 var textContainer;
@@ -53,12 +52,13 @@ export function initialize(app)
 	application.stage.addChild(textContainer)
 
 	TEXT.cacheAllLettersWidths(50)
+
+	if (PHASES.isSimpleSurveyModeActive())
+	{
+		setUseSquares(true)
+	}
 }
 
-export function setSimpleSurveyMode()
-{
-	simple_survey_mode = true
-}
 export function setUseSquares(value)
 {
 	LETTER.setUseSquares(value)
@@ -75,7 +75,7 @@ var progress_label
 function showProgress()
 {
 	var sentence_count = TEXT.getSentencesFilledCount()
-	if (simple_survey_mode)
+	if (PHASES.isSimpleSurveyModeActive())
 	{
 		var text = ''
 		var start = ''
@@ -164,7 +164,7 @@ function showMainLabel()
 	var main_text = 'Brutál\nDiktát'
 	var small_text='Aktuálny\npravopis'
 	if (TEXT.is_new_orthography) small_text='Nový pravopis\n(jedno i)'
-	if (simple_survey_mode)
+	if (PHASES.isSimpleSurveyModeActive())
 	{
 		main_text = 'Fáza\nprieskum'
 		small_text = 'Ďakujeme\nza čas,\nktorý\nvenujete\nypsilonu'
@@ -692,7 +692,7 @@ function animateMark(letter) {letter.animateMark(elapsed) }
 
 function animateProgressBar()
 {
-	if (simple_survey_mode)
+	if (PHASES.isSimpleSurveyModeActive())
 	{
 		let max_frames=200
 		if (elapsed<max_frames)

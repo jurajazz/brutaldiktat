@@ -8,9 +8,8 @@ import * as SCREEN_HIGH_SCORE from './screen_high_score.js'
 
 import * as PHASES from './phases.js'
 import * as TEXT from './text'
-import * as SERVER from './libs/server'
+import * as CONNECT from './libs/connect'
 
-var simple_survey_mode = false // zobrazuje veti v starom pravopise bez hodnotenia. Len uklada visledki
 var user_profile // struktura, ktora je naparsovana zo serveru z odpovede na SERVER.send_request_for_user_profile_from_server
 
 // hlavni aplikacni objekt
@@ -26,13 +25,13 @@ let diktatApp = new PIXI.Application({
 // spracovanie parametrov z URL
 {
 	const queryString = window.location.search;
-	console.log('URL params'+queryString);
+	//console.log('URL params'+queryString);
 	const urlParams = new URLSearchParams(queryString);
 	const survey_only = urlParams.get('iba_prieskum_nie_hra')
 	if ('ano' == survey_only)
 	{
 		console.log('Survey only mode')
-		simple_survey_mode = true
+		PHASES.setSimpleSurveyMode(true)
 	}
 }
 
@@ -72,12 +71,7 @@ function goPhase(new_phase)
 		case PHASES.PHASE_ENTERING_LETTERS:
 			SCREEN_INTRO.hide()
 			SCREEN_DIKTAT.initialize(diktatApp)
-			if (simple_survey_mode)
-			{
-				SCREEN_DIKTAT.setUseSquares(true)
-				SCREEN_DIKTAT.setSimpleSurveyMode()
-			}
-			user_profile = SERVER.get_user_profile()
+			user_profile = CONNECT.get_user_profile()
 			TEXT.markSentencesFilledByProfile(user_profile)
 			console.log("User Profile:"+user_profile)
 			if (SCREEN_DIKTAT.getWords() == '' || !TEXT.is_new_orthography)
@@ -99,7 +93,7 @@ function goPhase(new_phase)
 				data:
 				{
 					pravopis: ortography,
-					prieskum: simple_survey_mode,
+					prieskum: PHASES.isSimpleSurveyModeActive(),
 					veta: SCREEN_DIKTAT.getWords(),
 					slova_hash: SCREEN_DIKTAT.getWordsHash(),
 					viplnena: SCREEN_DIKTAT.getWordsWithAnswers(),
@@ -109,8 +103,8 @@ function goPhase(new_phase)
 					priebeh: SCREEN_DIKTAT.getTimeline(),
 				}
 			}
-			SERVER.post('sentence_record',data,SCREEN_DIKTAT.getWordsHash())
-			if (simple_survey_mode)
+			CONNECT.post('sentence_record',data,SCREEN_DIKTAT.getWordsHash())
+			if (PHASES.isSimpleSurveyModeActive())
 			{
 				goPhase(PHASES.PHASE_ENTERING_LETTERS)
 			}
@@ -136,27 +130,10 @@ function goPhase(new_phase)
 }
 
 // spusti hru
-SERVER.send_request_for_user_profile_from_server()
+CONNECT.send_request_for_user_profile_from_server()
 addPollers()
 TEXT.calculateSentencesHash()
-if (simple_survey_mode)
-{
-	goPhase(PHASES.PHASE_INTRO_SCREEN)
-	// treba prerobit na asinchronni dizajn - intro screen bude pocas cakania na server zobrazeni
-	var timeout_ms=2000
-	var started=performance.now()
-	while (performance.now()-started < timeout_ms)
-	{
-		if (SERVER.is_user_profile_received()) break
-	}
-	var elapsed_ms = performance.now()-started
-	console.log("Server response waiting:"+elapsed_ms+'ms')
-	goPhase(PHASES.PHASE_ENTERING_LETTERS)
-}
-else
-{
-	goPhase(PHASES.PHASE_INTRO_SCREEN)
-}
+goPhase(PHASES.PHASE_INTRO_SCREEN)
 //goPhase(PHASES.PHASE_ENTERING_LETTERS)
 
 var app_elapsed_time=0
@@ -166,6 +143,15 @@ function addPollers()
 		app_elapsed_time += delta;
 		switch (PHASES.phase)
 		{
+			case PHASES.PHASE_INTRO_SCREEN:
+				if (PHASES.isSimpleSurveyModeActive())
+				{
+					if (CONNECT.is_user_profile_received())
+					{
+						goPhase(PHASES.PHASE_ENTERING_LETTERS);
+					}
+				}
+				break
 			case PHASES.PHASE_ENTERING_LETTERS:
 				if (SCREEN_DIKTAT.checkIfAllLettersAreFilled())
 				{

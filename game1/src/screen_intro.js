@@ -117,8 +117,8 @@ function showButtons()
 		    buttonWidth, buttonHeight,
 		    0, y+buttonHeight+0.33*buttonHeight)
 	}
-	introScreen.addChild(buttonWithYpsilon)
-	introScreen.addChild(buttonWithoutYpsilon)
+	// kim nie je zo servera odpoved, alebo timeout - ziadne tlacitka sa nezobrazia
+	// zobrazia sa az po odpovedi zo serveru alebo timeoute
 }
 
 var letters=[]
@@ -160,6 +160,8 @@ function showCursor()
 
 var elapsed=0
 var ticker = false
+var timeout_for_server_response_ticks = 5000
+var buttons_shown = false
 function addAnimations()
 {
 	if (ticker) return
@@ -170,6 +172,13 @@ function addAnimations()
 			if (cursor_graphics) cursor_graphics.animate(elapsed)
 			//if (PHASES.PHASE_SHOWING_RESULTS == PHASES.phase) letters.forEach(animateMark);
 			animateCursor(elapsed)
+			if (!buttons_shown && elapsed*application.ticker.deltaMS > timeout_for_server_response_ticks && PHASES.is(PHASES.PHASE_INTRO_SCREEN))
+			{
+				console.log("Timeout waiting for connection.")
+				buttons_shown = true
+				introScreen.addChild(buttonWithYpsilon)
+				introScreen.addChild(buttonWithoutYpsilon)
+			}
 	})
 	ticker=true
 }

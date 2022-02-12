@@ -10,3 +10,20 @@ export function setPhase(p)
 {
 	phase = p
 }
+
+export function is(p)
+{
+	return (p == phase)
+}
+
+var simple_survey_mode = false // zobrazuje veti v starom pravopise bez hodnotenia. Len uklada visledki
+
+export function setSimpleSurveyMode(value)
+{
+	simple_survey_mode = value
+}
+
+export function isSimpleSurveyModeActive()
+{
+	return simple_survey_mode
+}
