@@ -12,7 +12,9 @@ import * as LETTER from './animation/letter'
 import * as PHASES from './phases.js'
 import * as HASHES from './libs/hashes.js'
 
-var TIME_PER_WILDCARD_LETTER = 2.5
+var TIME_PER_DIKTAT_INIT = 5 // cas, ktori sa pripocita k casu potrebnemu pre kazde pismeno (cas potrebni na zorientovanie)
+var TIME_PER_WILDCARD_LETTER = 2.5 // cas, ktori je k dispozicii pre jedno pismeno
+
 // list of letters
 var letters = [] // list of objects LETTER.Letter
 var elapsed=0 // total elapsed time for animations
@@ -74,14 +76,15 @@ var back_progress
 var progress
 var progress_container
 var progress_label
-var time_available=15
+var progress_ypos=0
+var time_available=15 // cas, ktori je k dispozicii na dokoncenie
 var stress_start_time = performance.now()
 var stress_end_time = performance.now()
 
+
 function showStressBar() // v pripade prieskumu: progressBar
 {
-	stress_start_time = performance.now()
-	game_finished = false
+	gameStart()
 	var sentence_count = TEXT.getSentencesFilledCount()
 	var text = ''
 	var progress_size_relative = 1
@@ -114,11 +117,11 @@ function showStressBar() // v pripade prieskumu: progressBar
 		text = 'Zostáva '+time_available+' s'
 		progress_color = 0xe0e0e0
 	}
-	var ypos = -screen_height*0.5 + screen_height*0.12
+	progress_ypos = -screen_height*0.5 + screen_height*0.12
 	var fontsize = screen_height*0.05
 	if (!horizontal_mode)
 	{
-		ypos = -screen_height*0.5 + screen_height*0.17
+		progress_ypos = -screen_height*0.5 + screen_height*0.17
 	}
 	progress_label = new PIXI.Text(text,
 	{ fontFamily : STYLES.fontFamily,
@@ -126,8 +129,13 @@ function showStressBar() // v pripade prieskumu: progressBar
 		fill : STYLES.progressFontColor,
 	})
 	progress_label.anchor.set(0.5,0)
-	progress_label.y = ypos
+	progress_label.y = progress_ypos
 
+	paintProgressBars(progress_color,progress_size_relative)
+}
+
+function paintProgressBars(progress_color,progress_size_relative)
+{
 	back_progress = new PIXI.Graphics();
 	progress_container = new PIXI.Container();
 	progress = new PIXI.Graphics();
@@ -142,13 +150,13 @@ function showStressBar() // v pripade prieskumu: progressBar
 		var margin_w = screen_width*0.2
 		back_progress.drawRoundedRect(
 			-screen_width*0.5+margin_w,
-			ypos,
+			progress_ypos,
 			screen_width-margin_w*2,
 			screen_height*0.07,
 			5);
 		progress.drawRoundedRect(
 			-screen_width*0.5+margin_w+margin_in,
-			ypos+margin_in,
+			progress_ypos+margin_in,
 			(screen_width-margin_w*2-margin_in*2)*progress_size_relative,
 			screen_height*0.07-margin_in*2,
 			5);
@@ -158,13 +166,13 @@ function showStressBar() // v pripade prieskumu: progressBar
 		var margin_w = screen_width*0.05
 		back_progress.drawRoundedRect(
 			-screen_width*0.5+margin_w,
-			ypos,
+			progress_ypos,
 			screen_width-margin_w*2,
 			screen_height*0.07,
 			10);
 		progress.drawRoundedRect(
 			-screen_width*0.5+margin_w+margin_in,
-			ypos+margin_in,
+			progress_ypos+margin_in,
 			(screen_width-margin_w*2-margin_in)*progress_size_relative,
 			screen_height*0.07-margin_in*2,
 			5);
@@ -675,6 +683,7 @@ function showText()
 	}
 	time_available=0
 	letters.forEach(addLetterToContainer);
+	time_available += TIME_PER_DIKTAT_INIT
 	// nastav polohu nedefinovanich pismen
 	letters.forEach(setLettersPosition);
 	addAnimations();
@@ -734,11 +743,19 @@ function animateProgressBar()
 	}
 }
 
+function gameStart()
+{
+	stress_start_time = performance.now()
+	game_finished = false
+	progress_is_red = false
+}
+
 function gameFinishedAllFilled()
 {
 	game_finished = true
 }
 
+var progress_is_red = false
 function animateStressBar()
 {
 	var total_ms = 1000*time_available
@@ -757,13 +774,18 @@ function animateStressBar()
 		progress_label.text = 'Zostáva '+Math.round(remaining_ms/1000)+' s'
 	else
 		progress_label.text = 'Nestihli ste to!'
-	if (remaining_ms < 10000)
+	if (relative_time < 0.30)
 	{
 		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / 30))
 		progress_label.style.fill = '#FF0000'
 		progress_label.alpha = alpha1
+		if (!progress_is_red)
+		{
+			paintProgressBars(0xffcccc,1)
+			progress_is_red=true
+		}
 	}
-	if (remaining_ms < 5000)
+	if (relative_time < 0.15)
 	{
 		let alpha2 = 0.5-0.5*Math.cos(3.14*(elapsed / 10))
 		progress.alpha = alpha2
