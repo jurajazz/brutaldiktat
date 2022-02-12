@@ -447,7 +447,7 @@ export function showCorrectnessResults()
 	else
 	{
 		// offer new orthograpy button
-		buttonNextPhase.alpha = 1
+		buttonNextPhase.alpha = 0.7
 	}
 	textContainer.addChild(buttonNextPhase)
 }
@@ -742,8 +742,14 @@ function gameFinishedAllFilled()
 function animateStressBar()
 {
 	var total_ms = 1000*time_available
-	if (!game_finished)
-		stress_end_time = performance.now()
+	if (game_finished)
+	{
+		var time_elapsed = (stress_end_time - stress_start_time)/1000
+		progress_label.text = 'Potrebný čas: '+Number.parseFloat(time_elapsed).toFixed(1)+'s'
+		progress_label.alpha = 1
+		return
+	}
+	stress_end_time = performance.now()
 	var remaining_ms = total_ms - (stress_end_time - stress_start_time)
 	if (remaining_ms<0) remaining_ms=0
 	var relative_time = remaining_ms/total_ms
