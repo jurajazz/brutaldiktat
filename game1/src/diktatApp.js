@@ -27,7 +27,7 @@ let diktatApp = new PIXI.Application({
 	const queryString = window.location.search;
 	//console.log('URL params'+queryString);
 	const urlParams = new URLSearchParams(queryString);
-	const survey_only = urlParams.get('iba_prieskum_nie_hra')
+	const survey_only = urlParams.get('prieskum')
 	if ('ano' == survey_only) PHASES.setSimpleSurveyMode(true)
 }
 
