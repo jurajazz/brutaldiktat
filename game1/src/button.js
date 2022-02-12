@@ -19,6 +19,14 @@ export class TextButton extends PIXI.Container {
         this.setText(text)
         this.interactive = true;
     }
+    setTextColor(color)
+    {
+	  this.buttonText.style.color = color
+    }
+    setBackgroundColor(color)
+    {
+	    this.button.tint = color
+    }
     setText(text) {
         if (this.buttonText) this.removeChild(this.buttonText)
         this.buttonText = new PIXI.Text(

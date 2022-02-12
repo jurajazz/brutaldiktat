@@ -109,13 +109,25 @@ function goPhase(new_phase)
 			{
 				if (TEXT.is_new_orthography)
 				{
-					SCREEN_DIKTAT.buttonNextPhase.setText("Skúsiť inú vetu")
+					var text = 'Počet chýb: 0'
+					text += "\nSkúsiť inú vetu"
+					SCREEN_DIKTAT.buttonNextPhase.setText(text)
+					SCREEN_DIKTAT.buttonNextPhase.alpha = 1
 				}
 				else
 				{
-					SCREEN_DIKTAT.buttonNextPhase.setText("Skúsiť nový pravopis")
+					var text = 'Počet chýb: '+SCREEN_DIKTAT.getNumberOfMistakes()
+					text += "\nSkúsiť nový pravopis"
+					SCREEN_DIKTAT.buttonNextPhase.setText(text)
+					var alpha = 1
+					if (SCREEN_DIKTAT.getNumberOfMistakes())
+					{
+						alpha=0.7 // abi bolo vidiet chibi poza tlacitko
+						SCREEN_DIKTAT.buttonNextPhase.setBackgroundColor(0xff0000)
+					}
+					SCREEN_DIKTAT.buttonNextPhase.alpha = alpha
 				}
-				SCREEN_DIKTAT.buttonNextPhase.alpha = 1
+
 			}
 			break
 		case PHASES.PHASE_SHOWING_HIGH_SCORE:
