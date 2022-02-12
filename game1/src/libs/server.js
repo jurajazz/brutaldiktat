@@ -1,13 +1,18 @@
 import * as COOKIES from './cookies'
 
 var user_profile_data_json = '' // will be filled by HTTP get request later
+var user_profile_received = false
+export function is_user_profile_received()
+{
+	return user_profile_received
+}
 export function get_user_profile()
 {
-	//user_profile_data_json = '{"count":2,"hashes":["27","33"]}' // for testing
-	// user_profile_data_json = 'abrakadabra'
+	//user_profile_data_json='{"nickname":"","sentences":{"count":2,"hashes":["53e4b79af4af5","2ce4327320966"]}}'
+	// user_profile_data_json = 'incorrect-data'
 	try
 	{
-		data = JSON.parse(user_profile_data_json)
+		var data = JSON.parse(user_profile_data_json)
 		return data
 	}
 	catch (error)
@@ -61,6 +66,8 @@ export function send_request_for_user_profile_from_server()
 		{
 			// Typical action to be performed when the document is ready:
 			user_profile_data_json = xhr.responseText
+			console.log("UserProfile:"+user_profile_data_json)
+			user_profile_received = true
 		}
 	};
 	xhr.open("GET", server_url, true)
