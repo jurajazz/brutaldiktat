@@ -17,9 +17,9 @@ var letters = [] // list of objects LETTER.Letter
 var elapsed=0 // total elapsed time for animations
 var timeline = [] // zaznami o case, kedi boli wildcardi viplnene
 var timeline_start = performance.now() // cas zobrazenia
-
-var application=null; // napriklad diktatApp
+var simple_survey_mode = false // rezim jednoduchecho prieskumu bez vihodnocovania
 var gameScreen;
+var application=null; // napriklad diktatApp
 var textContainer;
 
 var currentCursorIndex = 0
@@ -55,15 +55,127 @@ export function initialize(app)
 	TEXT.cacheAllLettersWidths(50)
 }
 
+export function setSimpleSurveyMode()
+{
+	simple_survey_mode = true
+}
+export function setUseSquares(value)
+{
+	LETTER.setUseSquares(value)
+}
+export function getUseSquares(value)
+{
+	LETTER.getUseSquares(value)
+}
+
+var back_progress
+var progress
+var progress_label
+
+function showProgress()
+{
+	var sentence_count = TEXT.getSentencesFilledCount()
+	if (simple_survey_mode)
+	{
+		var text = ''
+		var start = ''
+		switch (sentence_count)
+		{
+			case 1:
+				text += 'veta'
+				start = 'Zvládnutá '
+				break
+			case 2:
+			case 3:
+			case 4:
+				text += 'vety'
+				start = 'Zvládnuté '
+				break
+			default:
+				text += 'viet'
+				start = 'Zvládnutých '
+				break
+		}
+		text = start+sentence_count+' '+ text + ' z ' + TEXT.getSentencesTotalCount()
+
+		var ypos = -screen_height*0.5 + screen_height*0.12
+		var fontsize = screen_height*0.05
+		if (!horizontal_mode)
+		{
+			ypos = -screen_height*0.5 + screen_height*0.17
+		}
+		progress_label = new PIXI.Text(text,
+		{ fontFamily : STYLES.fontFamily,
+			fontSize: fontsize,
+			fill : 0x000000,
+			align : 'center'})
+		progress_label.y = ypos
+		progress_label.x = -progress_label.width/2
+		//progress_label.x = -progress_label.width/2 - screen_width/2 + screen_width*0.1
+
+		back_progress = new PIXI.Graphics();
+		progress = new PIXI.Graphics();
+		back_progress.beginFill(0xffffff);
+		//progress.beginFill(0xddbb77); // oranzova
+		progress.beginFill(0xbbdd77); // zelena
+		var margin_in = screen_width*0.005
+		//back_progress.lineStyle(3, 0xffffff, 5);
+		if (horizontal_mode)
+		{
+			var margin_w = screen_width*0.2
+			back_progress.drawRoundedRect(
+				-screen_width*0.5+margin_w,
+				ypos,
+				screen_width-margin_w*2,
+				screen_height*0.07,
+				5);
+			progress.drawRoundedRect(
+				-screen_width*0.5+margin_w+margin_in,
+				ypos+margin_in,
+				(screen_width-margin_w*2-margin_in*2)*(sentence_count/TEXT.getSentencesTotalCount()),
+				screen_height*0.07-margin_in*2,
+				5);
+		}
+		else
+		{
+			var margin_w = screen_width*0.05
+			back_progress.drawRoundedRect(
+				-screen_width*0.5+margin_w,
+				ypos,
+				screen_width-margin_w*2,
+				screen_height*0.07,
+				10);
+			progress.drawRoundedRect(
+				-screen_width*0.5+margin_w+margin_in,
+				ypos+margin_in,
+				(screen_width-margin_w*2-margin_in)*(sentence_count/TEXT.getSentencesTotalCount()),
+				screen_height*0.07-margin_in*2,
+				5);
+		}
+		back_progress.endFill();
+		gameScreen.addChild(back_progress);
+		gameScreen.addChild(progress);
+		gameScreen.addChild(progress_label);
+	}
+}
+
 function showMainLabel()
 {
+	var main_text = 'Brutál\nDiktát'
+	var small_text='Aktuálny\npravopis'
+	if (TEXT.is_new_orthography) small_text='Nový pravopis\n(jedno i)'
+	if (simple_survey_mode)
+	{
+		main_text = 'Fáza\nprieskum'
+		small_text = 'Ďakujeme\nza čas,\nktorý\nvenujete\nypsilonu'
+	}
 	if (horizontal_mode)
 	{
 		var ypos_big = -screen_height*0.5 + screen_height*0.05
 		var ypos_small = -screen_height*0.5 + screen_height*0.05
-		var fontsize_big = screen_height*0.1
-		var fontsize_small = screen_height*0.08
-		const label1 = new PIXI.Text('Brutál\nDiktát',
+		var fontsize_big = screen_height*0.06
+		var fontsize_small = screen_height*0.04
+		const label1 = new PIXI.Text(main_text,
 		{ fontFamily : STYLES.fontFamily,
 			fontSize: fontsize_big,
 			fill : 0x000000,
@@ -71,9 +183,7 @@ function showMainLabel()
 		label1.y = ypos_big
 		label1.x = -label1.width/2 - screen_width/2 + screen_width*0.1
 
-		var pravopis='Aktuálny\npravopis'
-		if (TEXT.is_new_orthography) pravopis='Nový pravopis\n(jedno i)'
-		var label2 = new PIXI.Text(pravopis,
+		var label2 = new PIXI.Text(small_text,
 		{ fontFamily : STYLES.fontFamily,
 			fontSize: fontsize_small,
 			fill : 0x000000,
@@ -86,11 +196,13 @@ function showMainLabel()
 	else
 	{
 		// vertical mode
+		main_text = main_text.replace(/\n/g, " ")
+		small_text = small_text.replace(/\n/g, " ")
 		var ypos_big = -screen_height*0.5 + screen_height*0.05
 		var fontsize_big = screen_height*0.05
 		var fontsize_small = screen_height*0.03
-		var ypos_small = ypos_big + fontsize_big*1.1
-		const label1 = new PIXI.Text('Brutál Diktát',
+		var ypos_small = ypos_big + fontsize_big*1.2
+		const label1 = new PIXI.Text(main_text,
 		{ fontFamily : STYLES.fontFamily,
 			fontSize: fontsize_big,
 			fill : 0x000000,
@@ -98,9 +210,7 @@ function showMainLabel()
 		label1.y = ypos_big
 		label1.x = -label1.width/2 // center
 
-		var pravopis='Aktuálny pravopis'
-		if (TEXT.is_new_orthography) pravopis='Nový pravopis (jedno i)'
-		var label2 = new PIXI.Text(pravopis,
+		var label2 = new PIXI.Text(small_text,
 		{ fontFamily : STYLES.fontFamily,
 			fontSize: fontsize_small,
 			fill : 0x000000,
@@ -277,9 +387,9 @@ function showBackground()
 		var margin_w = screen_width*0.05
 		back.drawRoundedRect(
 			-screen_width*0.5+margin_w,
-			-screen_height*0.5+screen_height*0.2,
+			-screen_height*0.5+screen_height*0.25,
 			screen_width-margin_w*2,
-			screen_height*0.7,
+			screen_height*0.65,
 			10);
 	}
 	back.endFill();
@@ -290,6 +400,7 @@ export function showGameScreen()
 {
 	gameScreen.removeChildren()
 	showMainLabel()
+	showProgress()
 	showText()
 	showCursor()
 	showButtons()
@@ -568,6 +679,7 @@ function addAnimations()
 			// pohibuj so zatial nedefinovanimi pismenami
 			letters.forEach(animateLetter);
 			animateTextContainer();
+			animateProgressBar();
 			if (cursor_graphics) cursor_graphics.animate(elapsed);
 			if (PHASES.PHASE_SHOWING_RESULTS == PHASES.phase) letters.forEach(animateMark);
 	})
@@ -577,6 +689,30 @@ function addAnimations()
 function setLettersPosition(letter) { letter.initPosition() }
 function animateLetter(letter) { letter.animate(elapsed) }
 function animateMark(letter) {letter.animateMark(elapsed) }
+
+function animateProgressBar()
+{
+	if (simple_survey_mode)
+	{
+		let max_frames=200
+		if (elapsed<max_frames)
+		{
+			let scaley=1+0.01*Math.cos(elapsed / 20.0)
+			let scalex=1+0.01*Math.cos(elapsed / 15.0)
+			//back_progress.scale.set(scalex,scaley)
+			//progress.scale.set(scalex,scaley)
+			let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / max_frames))
+			progress.alpha = alpha1
+			back_progress.alpha = alpha1
+		}
+		let label_frames=100
+		if (elapsed<label_frames)
+		{
+			let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / label_frames))
+			progress_label.alpha = alpha1
+		}
+	}
+}
 
 function animateTextContainer()
 {
