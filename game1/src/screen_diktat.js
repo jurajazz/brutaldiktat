@@ -9,6 +9,7 @@ import { TextButton } from './button'
 import * as TEXT from './text'
 import * as CURSOR from './animation/cursor'
 import * as LETTER from './animation/letter'
+//import * as STRESSBAR from './animation/stressbar'
 import * as PHASES from './phases.js'
 import * as HASHES from './libs/hashes.js'
 
@@ -34,6 +35,9 @@ var ticker = false // true ak uz je antivni
 var horizontal_mode = false
 var screen_width = window.innerWidth
 var screen_height = window.innerHeight
+
+var last_i_move=0
+var AUTO_I_PERIOD_FRAMES=60
 
 export function windowSizeChanged(w,h,horizontal)
 {
@@ -714,6 +718,7 @@ function addAnimations()
 			if (!PHASES.isSimpleSurveyModeActive()) animateStressBar();
 			if (cursor_graphics) cursor_graphics.animate(elapsed);
 			if (PHASES.PHASE_SHOWING_RESULTS == PHASES.phase) letters.forEach(animateMark);
+			if (TEXT.is_new_orthography) moveSingleIForward();
 	})
 	ticker=true
 }
@@ -721,6 +726,16 @@ function addAnimations()
 function setLettersPosition(letter) { letter.initPosition() }
 function animateLetter(letter) { letter.animate(elapsed) }
 function animateMark(letter) {letter.animateMark(elapsed) }
+
+function moveSingleIForward()
+{
+	if (elapsed - last_i_move > AUTO_I_PERIOD_FRAMES)
+	{
+		console.log("moveSingleIForward:"+elapsed+","+last_i_move)
+		last_i_move = elapsed
+		buttonIclicked()
+	}
+}
 
 function animateProgressBar()
 {
@@ -748,6 +763,7 @@ function gameStart()
 	stress_start_time = performance.now()
 	game_finished = false
 	progress_is_red = false
+	last_i_move = 0
 }
 
 function gameFinishedAllFilled()
