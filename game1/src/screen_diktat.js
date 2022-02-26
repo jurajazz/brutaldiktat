@@ -9,7 +9,7 @@ import { TextButton } from './button'
 import * as TEXT from './text'
 import * as CURSOR from './animation/cursor'
 import * as LETTER from './animation/letter'
-//import * as STRESSBAR from './animation/stressbar'
+import * as STRESSBAR from './animation/stressbar'
 import * as PHASES from './phases.js'
 import * as HASHES from './libs/hashes.js'
 
@@ -24,7 +24,6 @@ var timeline_start = performance.now() // cas zobrazenia
 var gameScreen;
 var application=null; // napriklad diktatApp
 var textContainer;
-var game_finished=false
 
 var currentCursorIndex = 0
 var cursor_graphics = null // object of CURSOR.Cursor
@@ -74,118 +73,6 @@ export function setUseSquares(value)
 export function getUseSquares(value)
 {
 	return LETTER.getUseSquares()
-}
-
-var back_progress
-var progress
-var progress_container
-var progress_label
-var progress_ypos=0
-var time_available=15 // cas, ktori je k dispozicii na dokoncenie
-var stress_start_time = performance.now()
-var stress_end_time = performance.now()
-
-
-function showStressBar() // v pripade prieskumu: progressBar
-{
-	gameStart()
-	var sentence_count = TEXT.getSentencesFilledCount()
-	var text = ''
-	var progress_size_relative = 1
-	var progress_color = 0xbbdd77
-	if (PHASES.isSimpleSurveyModeActive())
-	{
-		var start = ''
-		switch (sentence_count)
-		{
-			case 1:
-				text += 'veta'
-				start = 'Zvládnutá '
-				break
-			case 2:
-			case 3:
-			case 4:
-				text += 'vety'
-				start = 'Zvládnuté '
-				break
-			default:
-				text += 'viet'
-				start = 'Zvládnutých '
-				break
-		}
-		text = start+sentence_count+' '+ text + ' z ' + TEXT.getSentencesTotalCount()
-		progress_size_relative = (sentence_count/TEXT.getSentencesTotalCount())
-	}
-	else
-	{
-		text = 'Zostáva '+time_available+' s'
-		progress_color = 0xe0e0e0
-	}
-	progress_ypos = -screen_height*0.5 + screen_height*0.12
-	var fontsize = screen_height*0.05
-	if (!horizontal_mode)
-	{
-		progress_ypos = -screen_height*0.5 + screen_height*0.17
-	}
-	progress_label = new PIXI.Text(text,
-	{ fontFamily : STYLES.fontFamily,
-		fontSize: fontsize,
-		fill : STYLES.progressFontColor,
-	})
-	progress_label.anchor.set(0.5,0)
-	progress_label.y = progress_ypos
-
-	paintProgressBars(progress_color,progress_size_relative)
-}
-
-function paintProgressBars(progress_color,progress_size_relative)
-{
-	back_progress = new PIXI.Graphics();
-	progress_container = new PIXI.Container();
-	progress = new PIXI.Graphics();
-	back_progress.beginFill(0xffffff);
-	//progress.beginFill(0xddbb77); // oranzova
-
-	progress.beginFill(progress_color); // zelena
-	var margin_in = screen_width*0.005
-	//back_progress.lineStyle(3, 0xffffff, 5);
-	if (horizontal_mode)
-	{
-		var margin_w = screen_width*0.2
-		back_progress.drawRoundedRect(
-			-screen_width*0.5+margin_w,
-			progress_ypos,
-			screen_width-margin_w*2,
-			screen_height*0.07,
-			5);
-		progress.drawRoundedRect(
-			-screen_width*0.5+margin_w+margin_in,
-			progress_ypos+margin_in,
-			(screen_width-margin_w*2-margin_in*2)*progress_size_relative,
-			screen_height*0.07-margin_in*2,
-			5);
-	}
-	else
-	{
-		var margin_w = screen_width*0.05
-		back_progress.drawRoundedRect(
-			-screen_width*0.5+margin_w,
-			progress_ypos,
-			screen_width-margin_w*2,
-			screen_height*0.07,
-			10);
-		progress.drawRoundedRect(
-			-screen_width*0.5+margin_w+margin_in,
-			progress_ypos+margin_in,
-			(screen_width-margin_w*2-margin_in)*progress_size_relative,
-			screen_height*0.07-margin_in*2,
-			5);
-	}
-	back_progress.endFill();
-	gameScreen.addChild(back_progress);
-	progress_container.addChild(progress);
-	gameScreen.addChild(progress_container)
-	gameScreen.addChild(progress_label);
 }
 
 function showMainLabel()
@@ -429,7 +316,11 @@ export function showGameScreen()
 {
 	gameScreen.removeChildren()
 	showMainLabel()
-	showStressBar()
+	last_i_move = 0
+	STRESSBAR.set_horizontal_mode(horizontal_mode)
+	STRESSBAR.set_GameScreen(gameScreen)
+	STRESSBAR.show()
+	STRESSBAR.gameStart()
 	showText()
 	showCursor()
 	showButtons()
@@ -637,7 +528,7 @@ function cursorGotoNextPosition()
 	cursorGotoCurrentPosition()
 	if (checkIfAllLettersAreFilled())
 	{
-		gameFinishedAllFilled()
+		STRESSBAR.gameFinishedAllFilled()
 	}
 }
 
@@ -685,9 +576,9 @@ function showText()
 		}
 		//console.log("Drawing letters:"+(performance.now()-dstart)+"ms")
 	}
-	time_available=0
+	STRESSBAR.setTimeAvailable(0)
+	STRESSBAR.addTimeAvailable(TIME_PER_DIKTAT_INIT)
 	letters.forEach(addLetterToContainer);
-	time_available += TIME_PER_DIKTAT_INIT
 	// nastav polohu nedefinovanich pismen
 	letters.forEach(setLettersPosition);
 	addAnimations();
@@ -698,7 +589,7 @@ function addLetterToContainer(letter)
 	textContainer.addChild(letter.getStructure().sprite);
 	if (letter.getStructure().is_wildcard)
 	{
-		time_available += TIME_PER_WILDCARD_LETTER
+		STRESSBAR.addTimeAvailable(TIME_PER_WILDCARD_LETTER)
 		textContainer.addChild(letter.getStructure().sprite2);
 		var sq = letter.getStructure().square;
 		if (sq)
@@ -714,8 +605,8 @@ function addAnimations()
 			// pohibuj so zatial nedefinovanimi pismenami
 			letters.forEach(animateLetter);
 			animateTextContainer();
-			if (PHASES.isSimpleSurveyModeActive()) animateProgressBar();
-			if (!PHASES.isSimpleSurveyModeActive()) animateStressBar();
+			if (PHASES.isSimpleSurveyModeActive()) STRESSBAR.animateProgress(elapsed);
+			if (!PHASES.isSimpleSurveyModeActive()) STRESSBAR.animateStress(elapsed);
 			if (cursor_graphics) cursor_graphics.animate(elapsed);
 			if (PHASES.PHASE_SHOWING_RESULTS == PHASES.phase) letters.forEach(animateMark);
 			if (TEXT.is_new_orthography) moveSingleIForward();
@@ -734,103 +625,6 @@ function moveSingleIForward()
 		console.log("moveSingleIForward:"+elapsed+","+last_i_move)
 		last_i_move = elapsed
 		buttonIclicked()
-	}
-}
-
-function animateProgressBar()
-{
-	let max_frames=200
-	if (elapsed<max_frames)
-	{
-		let scaley=1+0.01*Math.cos(elapsed / 20.0)
-		let scalex=1+0.01*Math.cos(elapsed / 15.0)
-		//back_progress.scale.set(scalex,scaley)
-		//progress.scale.set(scalex,scaley)
-		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / max_frames))
-		progress.alpha = alpha1
-		back_progress.alpha = alpha1
-	}
-	let label_frames=100
-	if (elapsed<label_frames)
-	{
-		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / label_frames))
-		progress_label.alpha = alpha1
-	}
-}
-
-function gameStart()
-{
-	stress_start_time = performance.now()
-	game_finished = false
-	progress_is_red = false
-	last_i_move = 0
-}
-
-function gameFinishedAllFilled()
-{
-	game_finished = true
-}
-
-var progress_is_red = false
-function animateStressBar()
-{
-	var total_ms = 1000*time_available
-	if (game_finished)
-	{
-		var time_elapsed = (stress_end_time - stress_start_time)/1000
-		progress_label.text = 'Potrebný čas: '+Number.parseFloat(time_elapsed).toFixed(1)+'s'
-		progress_label.alpha = 1
-		return
-	}
-	stress_end_time = performance.now()
-	var remaining_ms = total_ms - (stress_end_time - stress_start_time)
-	if (remaining_ms<0) remaining_ms=0
-	var relative_time = remaining_ms/total_ms
-	if (relative_time)
-		progress_label.text = 'Zostáva '+Math.round(remaining_ms/1000)+' s'
-	else
-		progress_label.text = 'Nestihli ste to!'
-	if (relative_time < 0.30)
-	{
-		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / 30))
-		progress_label.style.fill = '#FF0000'
-		progress_label.alpha = alpha1
-		if (!progress_is_red)
-		{
-			paintProgressBars(0xffcccc,1)
-			progress_is_red=true
-		}
-	}
-	if (relative_time < 0.15)
-	{
-		let alpha2 = 0.5-0.5*Math.cos(3.14*(elapsed / 10))
-		progress.alpha = alpha2
-	}
-	var margin_in = screen_width*0.005
-	var margin_w = 0
-	var width = screen_width*0.8*relative_time
-	if (horizontal_mode)
-	{
-		margin_w = screen_width*0.15
-		width = screen_width*0.6*relative_time
-	}
-	progress_container.width = width
-	progress_container.x = progress_container.width*0.5-screen_width*0.45+margin_in+margin_w
-	//progress.width = 15 //100*(remaining_ms/total_ms)
-	let max_frames=50
-	if (elapsed<max_frames)
-	{
-		let scaley=1+0.01*Math.cos(elapsed / 20.0)
-		let scalex=1+0.01*Math.cos(elapsed / 15.0)
-		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / max_frames))
-		progress.alpha = alpha1
-		back_progress.alpha = alpha1
-	}
-	let label_frames=100
-	if (elapsed<label_frames)
-	{
-		let alpha1 = 0.5-0.5*Math.cos(3.14*(elapsed / label_frames))
-		progress_label.alpha = alpha1
 	}
 }
 
