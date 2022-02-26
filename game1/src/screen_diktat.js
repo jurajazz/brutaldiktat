@@ -13,7 +13,7 @@ import * as STRESSBAR from './animation/stressbar'
 import * as PHASES from './phases.js'
 import * as HASHES from './libs/hashes.js'
 
-var TIME_PER_DIKTAT_INIT = 5 // cas, ktori sa pripocita k casu potrebnemu pre kazde pismeno (cas potrebni na zorientovanie)
+var TIME_PER_DIKTAT_INIT_PER_CHAR = 0.13 // cas, ktori sa pripocita k casu potrebnemu pre kazde pismeno (cas potrebni na zorientovanie)
 var TIME_PER_WILDCARD_LETTER = 2.5 // cas, ktori je k dispozicii pre jedno pismeno
 
 // list of letters
@@ -577,7 +577,7 @@ function showText()
 		//console.log("Drawing letters:"+(performance.now()-dstart)+"ms")
 	}
 	STRESSBAR.setTimeAvailable(0)
-	STRESSBAR.addTimeAvailable(TIME_PER_DIKTAT_INIT)
+	STRESSBAR.resetTimeForRead()
 	letters.forEach(addLetterToContainer);
 	// nastav polohu nedefinovanich pismen
 	letters.forEach(setLettersPosition);
@@ -587,6 +587,7 @@ function showText()
 function addLetterToContainer(letter)
 {
 	textContainer.addChild(letter.getStructure().sprite);
+	STRESSBAR.addTimeForRead(TIME_PER_DIKTAT_INIT_PER_CHAR)
 	if (letter.getStructure().is_wildcard)
 	{
 		STRESSBAR.addTimeAvailable(TIME_PER_WILDCARD_LETTER)
@@ -622,7 +623,7 @@ function moveSingleIForward()
 {
 	if (elapsed - last_i_move > AUTO_I_PERIOD_FRAMES)
 	{
-		console.log("moveSingleIForward:"+elapsed+","+last_i_move)
+		//console.log("moveSingleIForward:"+elapsed+","+last_i_move)
 		last_i_move = elapsed
 		buttonIclicked()
 	}

@@ -23,6 +23,7 @@ var progress_container
 var progress_label
 var progress_ypos=0
 var time_available=15 // cas, ktori je k dispozicii na dokoncenie
+var time_for_read=1
 var stress_start_time = performance.now()
 var stress_end_time = performance.now()
 
@@ -35,6 +36,18 @@ export function addTimeAvailable(time)
 {
 	time_available+=time
 }
+
+export function resetTimeForRead()
+{
+	time_for_read=0
+}
+
+export function addTimeForRead(time)
+{
+	time_available+=time
+	time_for_read+=time
+}
+
 
 export function show() // v pripade prieskumu: progressBar
 {
@@ -62,7 +75,7 @@ export function show() // v pripade prieskumu: progressBar
 				start = 'Zvládnutých '
 				break
 		}
-		text = start+sentence_count+' '+ text + ' z ' + TEXT.getSentencesTotalCount()
+		text = start+sentence_count+' '+ text + ' zo ' + TEXT.getSentencesTotalCount()
 		progress_size_relative = (sentence_count/TEXT.getSentencesTotalCount())
 	}
 	else
@@ -126,7 +139,7 @@ function paint(progress_color,progress_size_relative)
 		progress.drawRoundedRect(
 			-screen_width*0.5+margin_w+margin_in,
 			progress_ypos+margin_in,
-			(screen_width-margin_w*2-margin_in)*progress_size_relative,
+			(screen_width-margin_w*2-2*margin_in)*progress_size_relative,
 			screen_height*0.07-margin_in*2,
 			5);
 	}
@@ -150,8 +163,16 @@ export function animateStress(elapsed)
 	}
 	stress_end_time = performance.now()
 	var remaining_ms = total_ms - (stress_end_time - stress_start_time)
+	if (remaining_ms > 1000*(time_available-time_for_read) && !TEXT.is_new_orthography)
+	{
+		var wait_s = remaining_ms - 1000*(time_available-time_for_read)
+		progress_label.text = 'Precitajte si vetu ('+Math.round(wait_s/1000)+')'
+		progress_label.alpha = 1
+		return
+	}
 	if (remaining_ms<0) remaining_ms=0
-	var relative_time = remaining_ms/total_ms
+	var relative_time = remaining_ms/(total_ms-1000*time_for_read)
+	if (TEXT.is_new_orthography) relative_time = remaining_ms/total_ms
 	if (relative_time)
 		progress_label.text = 'Zostáva '+Math.round(remaining_ms/1000)+' s'
 	else
@@ -163,6 +184,7 @@ export function animateStress(elapsed)
 		progress_label.alpha = alpha1
 		if (!progress_is_red)
 		{
+			// nakresli cervenou
 			paint(0xffcccc,1)
 			progress_is_red=true
 		}
@@ -174,7 +196,7 @@ export function animateStress(elapsed)
 	}
 	var margin_in = screen_width*0.005
 	var margin_w = 0
-	var width = screen_width*0.8*relative_time
+	var width = screen_width*0.9*relative_time
 	if (horizontal_mode)
 	{
 		margin_w = screen_width*0.15
