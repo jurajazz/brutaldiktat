@@ -77,7 +77,7 @@ export function getUseSquares(value)
 
 function showMainLabel()
 {
-	var main_text = 'Brutál\nDiktát'
+	var main_text = 'Diktátik'
 	var small_text='Aktuálny\npravopis'
 	if (TEXT.is_new_orthography) small_text='Nový pravopis\n(jedno i)'
 	if (PHASES.isSimpleSurveyModeActive())

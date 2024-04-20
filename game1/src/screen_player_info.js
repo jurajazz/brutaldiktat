@@ -25,7 +25,7 @@ export function initialize(app)
 export function showScreen()
 {
 	let y = -window.innerHeight / 2 + 40
-	const label1 = new PIXI.Text('Brutal Diktát',
+	const label1 = new PIXI.Text('Diktátik',
 		{
 			fontFamily: STYLES.fontFamily,
 			fontSize: 80,
@@ -55,19 +55,19 @@ export function showScreen()
 	gameScreen.addChild(okButton)
 
 	textInputArray.push(defaultTextInput())
-	textInputArray[0].placeholder = 'Prezívka...'
+	textInputArray[0].placeholder = 'Prezývka...'
 	textInputArray[0].x = -textInputArray[0].width / 2
 	textInputArray[0].y = y + 100
 
 	textInputArray.push(defaultTextInput())
-	textInputArray[1].placeholder = 'Vzdelanie...'
+	textInputArray[1].placeholder = 'Približný vek...'
 	textInputArray[1].x = -textInputArray[1].width / 2
-	textInputArray[1].y = y + 200
+	textInputArray[1].y = y + 300
 
 	textInputArray.push(defaultTextInput())
-	textInputArray[2].placeholder = 'Približní vek...'
+	textInputArray[2].placeholder = 'Vzdelanie...'
 	textInputArray[2].x = -textInputArray[2].width / 2
-	textInputArray[2].y = y + 300
+	textInputArray[2].y = y + 200
 
 	gameScreen.addChild(textInputArray[0])
 	gameScreen.addChild(textInputArray[1])

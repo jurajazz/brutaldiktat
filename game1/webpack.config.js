@@ -6,9 +6,9 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       hash: true,
-      title: 'Brutaldiktat with webpack',
-      header: 'Brutaldiktat',
-      metaDesc: 'Brutaldiktat aplikacia',
+      title: 'Diktatik with webpack',
+      header: 'Diktatik',
+      metaDesc: 'Diktatik aplikacia',
       template: './src/index.html',
       filename: 'index.html',
       inject: 'body'

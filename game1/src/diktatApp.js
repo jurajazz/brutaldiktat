@@ -5,6 +5,7 @@ import * as PIXI from 'pixi.js'
 import * as SCREEN_INTRO from './screen_intro.js'
 import * as SCREEN_DIKTAT from './screen_diktat.js'
 import * as SCREEN_HIGH_SCORE from './screen_high_score.js'
+import * as SCREEN_PLAYER_INFO from './screen_player_info.js'
 
 import * as PHASES from './phases.js'
 import * as TEXT from './text'
@@ -135,6 +136,9 @@ function goPhase(new_phase)
 			SCREEN_HIGH_SCORE.initialize(diktatApp)
 			SCREEN_HIGH_SCORE.showScreen()
 			break
+		case PHASES.PHASE_ENTERING_PLAYER_INFO:
+			SCREEN_PLAYER_INFO.initialize(diktatApp)
+			SCREEN_PLAYER_INFO.showScreen()
 	}
 }
 
@@ -143,6 +147,7 @@ CONNECT.send_request_for_user_profile_from_server()
 addPollers()
 TEXT.calculateSentencesHash()
 goPhase(PHASES.PHASE_INTRO_SCREEN)
+//goPhase(PHASES.PHASE_ENTERING_PLAYER_INFO)
 //goPhase(PHASES.PHASE_ENTERING_LETTERS)
 
 var app_elapsed_time=0
@@ -163,7 +168,7 @@ function addPollers()
 				if (CONNECT.runningLocally())
 				{
 					// pre richle testovanie - intro screen sa preskoci
-					goPhase(PHASES.PHASE_ENTERING_LETTERS);
+					//goPhase(PHASES.PHASE_ENTERING_LETTERS);
 				}
 				break
 			case PHASES.PHASE_ENTERING_LETTERS:

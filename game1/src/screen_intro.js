@@ -52,7 +52,7 @@ export function showScreen()
 	var fontsize_small = screen_height*0.1
 	let ypos_big = -screen_height*0.5+screen_height*0.2
 	let ypos_small = ypos_big+fontsize_big*1.5
-	var text_big = 'Brutál Diktát'
+	var text_big = 'Diktátik'
 	var text_small = 'Vyskúšajte, aké je písanie'
 	if (!horizontal_mode)
 	{
@@ -61,7 +61,7 @@ export function showScreen()
 		ypos_small = ypos_big+fontsize_big*1.5
 		fontsize_big /= 2
 		fontsize_small /= 2
-		text_big = 'Brutál\nDiktát'
+		text_big = 'Diktátik'
 		text_small = 'Vyskúšajte,\naké je písanie'
 	}
 	const label1 = new PIXI.Text(text_big,

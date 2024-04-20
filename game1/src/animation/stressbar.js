@@ -166,7 +166,7 @@ export function animateStress(elapsed)
 	if (remaining_ms > 1000*(time_available-time_for_read) && !TEXT.is_new_orthography)
 	{
 		var wait_s = remaining_ms - 1000*(time_available-time_for_read)
-		progress_label.text = 'Precitajte si vetu ('+Math.round(wait_s/1000)+')'
+		progress_label.text = 'Prečítajte si vetu ('+Math.round(wait_s/1000)+')'
 		progress_label.alpha = 1
 		return
 	}
