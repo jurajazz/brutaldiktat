@@ -3,8 +3,9 @@ import * as STYLES from '../styles'
 import * as PHASES from '../phases.js'
 import * as TEXT from '../text.js'
 
-var screen_width = window.innerWidth
-var screen_height = window.innerHeight
+const container = document.getElementById('display');
+var screen_width = container.clientWidth
+var screen_height = container.clientHeight
 var horizontal_mode=false
 var gameScreen=null
 

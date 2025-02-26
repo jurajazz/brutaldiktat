@@ -32,8 +32,9 @@ var used_font_size = 1
 var ticker = false // true ak uz je antivni
 
 var horizontal_mode = false
-var screen_width = window.innerWidth
-var screen_height = window.innerHeight
+const container = document.getElementById('display');
+var screen_width = container.clientWidth
+var screen_height = container.clientHeight
 
 var last_i_move=0
 var AUTO_I_PERIOD_FRAMES=60
@@ -43,6 +44,7 @@ export function windowSizeChanged(w,h,horizontal)
 	horizontal_mode = horizontal
 	screen_width = w
 	screen_height = h
+	console.log("screen_diktat.windowSizeChanged: " + screen_width + "," + screen_height);
 }
 
 export function initialize(app)
@@ -168,45 +170,46 @@ export let buttonNextPhase = null
 
 function showButtons()
 {
+	var fontsize = screen_height*0.07
 	if (horizontal_mode)
 	{
 		let buttonHeight=screen_width*0.1
-		let y = screen_height*0.5-buttonHeight*0.5
-		//console.log("showButtons h:"+window.innerHeight)
+		let y = screen_height*0.5-buttonHeight*0.8
+		//console.log("showButtons h:"+screen_height)
 		yButton = new TextButton("y",
 			buttonHeight, buttonHeight,
-			-screen_width*0.5 + screen_width*0.1, y)
+			-screen_width*0.5 + screen_width*0.1, y, fontsize)
 	      iButton = new TextButton("i",
 			buttonHeight, buttonHeight,
-			screen_width*0.5 - screen_width*0.1, y)
+			screen_width*0.5 - screen_width*0.1, y, fontsize)
 		backButton = new TextButton("<<",
 			buttonHeight, buttonHeight,
-			screen_width*0.5 - screen_width*0.1, y-buttonHeight*1.5)
-		let y2 = window.innerHeight/2-buttonHeight*2
+			screen_width*0.5 - screen_width*0.1, y-buttonHeight*1.5, fontsize)
+		let y2 = screen_height/2-buttonHeight*2
 		buttonNextPhase = new TextButton("-",
-		    400, buttonHeight,
-		    0, y2)
+		screen_width*0.7, buttonHeight*2,
+		    0, y2, fontsize)
 	}
 	else
 	{
 		// vertical mode
 		let buttonHeight=screen_height*0.1
 		let buttonWidth=screen_width/(3+1)
-		let y = screen_height*0.5-buttonHeight*0.25
-		//console.log("showButtons h:"+window.innerHeight)
+		let y = screen_height*0.5-buttonHeight*0.7		
+		//console.log("showButtons h:"+screen_height)
 		yButton = new TextButton("y",
 		    buttonWidth, buttonHeight,
-		    -buttonWidth*1.2, y)
+		    -buttonWidth*1.2, y, fontsize)
 	      iButton = new TextButton("i",
 	    	    buttonWidth, buttonHeight,
-	    	    0, y)
+	    	    0, y, fontsize)
 		backButton = new TextButton("<<",
 		    buttonWidth, buttonHeight,
-		    buttonWidth*1.2, y)
-		let y2 = window.innerHeight/2-buttonHeight*2
+		    buttonWidth*1.2, y, fontsize)
+		let y2 = 0
 		buttonNextPhase = new TextButton("-",
-		    400, buttonHeight,
-		    0, y2)
+		screen_width*0.7, buttonHeight*2,
+		    0, y2, fontsize*0.7)
 	}
 	buttonNextPhase.alpha = 0
 	gameScreen.addChild(iButton)
@@ -294,7 +297,7 @@ function showBackground()
 			-screen_width*0.5+margin_w,
 			-screen_height*0.5+screen_height*0.2,
 			screen_width-margin_w*2,
-			screen_height*0.80,
+			screen_height*0.77,
 			10);
 	}
 	else
@@ -305,7 +308,7 @@ function showBackground()
 			-screen_width*0.5+margin_w,
 			-screen_height*0.5+screen_height*0.25,
 			screen_width-margin_w*2,
-			screen_height*0.65,
+			screen_height*0.60,
 			10);
 	}
 	back.endFill();
@@ -350,7 +353,7 @@ export function showCorrectnessResults()
 	else
 	{
 		// offer new orthograpy button
-		buttonNextPhase.alpha = 0.7
+		buttonNextPhase.alpha = 0.6
 	}
 	textContainer.addChild(buttonNextPhase)
 }
@@ -555,7 +558,7 @@ function showText()
 	elapsed = 0
 	currentCursorIndex = 0
 	// skus ulozit slova tak, abi sa zmestili a pritom viplnali priestor
-	let max_size=70
+	let max_size=50
 	let min_size=10
 	{
 		var dstart = performance.now();
@@ -611,6 +614,9 @@ function addAnimations()
 			if (cursor_graphics) cursor_graphics.animate(elapsed);
 			if (PHASES.PHASE_SHOWING_RESULTS == PHASES.phase) letters.forEach(animateMark);
 			if (TEXT.is_new_orthography) moveSingleIForward();
+			yButton.animate(elapsed)
+			iButton.animate(elapsed)
+			buttonNextPhase.animate_with_alpha(elapsed,0.1,0.8)
 	})
 	ticker=true
 }

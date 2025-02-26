@@ -29,13 +29,17 @@ export function initialize(app)
 	application = app
 
 	gameScreen = new PIXI.Container();
-	gameScreen.position.set(window.innerWidth/2, window.innerHeight/2)
+	const container = document.getElementById('display');
+	var screen_width = container.clientWidth
+	var screen_height = container.clientHeight
+
+	gameScreen.position.set(screen_width/2, screen_height/2)
 	application.stage.addChild(gameScreen)
 }
 
 export function showScreen()
 {
-	let y = -window.innerHeight/2 + 40
+	let y = -screen_height/2 + 40
 	const label1 = new PIXI.Text('Brutál Diktát',
 	{ fontFamily : STYLES.fontFamily,
 		fontSize: 80,

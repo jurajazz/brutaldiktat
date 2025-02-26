@@ -20,8 +20,8 @@ var application=null; // napriklad diktatApp
 var introScreen;
 var textContainer;
 var cursor_graphics = null // object of CURSOR.Cursor
-var screen_width = window.innerWidth
-var screen_height = window.innerHeight
+var screen_width = 0
+var screen_height = 0
 var horizontal_mode = false
 
 var currentCursorIndex = 0
@@ -34,7 +34,6 @@ export function initialize(app)
 	application = app
 
 	introScreen = new PIXI.Container();
-	introScreen.position.set(window.innerWidth/2, window.innerHeight/2)
 	application.stage.addChild(introScreen)
 }
 
@@ -43,10 +42,12 @@ export function windowSizeChanged(w,h,horizontal)
 	horizontal_mode = horizontal
 	screen_width = w
 	screen_height = h
+	console.log("screen_intro.windowSizeChanged: " + screen_width + "," + screen_height);
 }
 
 export function showScreen()
 {
+	introScreen.position.set(screen_width/2, screen_height/2)
 	showBackground()
 	var fontsize_big = screen_height*0.2
 	var fontsize_small = screen_height*0.1
@@ -94,29 +95,30 @@ function showButtons()
 	var text_s_y = "s ypsilonom"
 	var text_bez_y = "bez neho"
 	var buttons_count=2
+	var fontsize = screen_height*0.07
 	if (horizontal_mode)
 	{
-		let buttonHeight=screen_height*0.5*0.5
+		let buttonHeight=screen_height*0.45*0.45
 		let y = 1.5*buttonHeight
-		let buttonWidth = screen_width*0.8/(buttons_count+1)
+		let buttonWidth = screen_width*1/(buttons_count+1)
 		buttonWithYpsilon = new TextButton(text_s_y,
 		    buttonWidth, buttonHeight,
-		    -buttonWidth, y)
+		    -buttonWidth*0.9, y, fontsize)
 		buttonWithoutYpsilon = new TextButton(text_bez_y,
 		    buttonWidth, buttonHeight,
-		    +buttonWidth, y)
+		    +buttonWidth*0.9, y, fontsize)
 	}
 	else
 	{
-		let buttonHeight=screen_height*0.5/(buttons_count+1)
+		let buttonHeight=screen_height*0.45/(buttons_count+1)
 		let y = buttonHeight+0.33*buttonHeight
 		let buttonWidth = screen_width*0.8
 		buttonWithYpsilon = new TextButton(text_s_y,
 		    buttonWidth, buttonHeight,
-		    0, y)
+		    0, y, fontsize)
 		buttonWithoutYpsilon = new TextButton(text_bez_y,
 		    buttonWidth, buttonHeight,
-		    0, y+buttonHeight+0.33*buttonHeight)
+		    0, y+buttonHeight+0.33*buttonHeight, fontsize)
 	}
 	// kim nie je zo servera odpoved, alebo timeout - ziadne tlacitka sa nezobrazia
 	// zobrazia sa az po odpovedi zo serveru alebo timeoute
@@ -137,10 +139,8 @@ function showBackground()
 			let letter = new LETTER.Letter('y','i',color,is_wildcard,false,i+j,false,false,size);
 			letter.setAlphaMax(0.15)
 			letter.setAlphaMaxSelected(0.3)
-			//var x = Math.random() * window.innerWidth - window.innerWidth/2
-			//var y = Math.random() * window.innerHeight - window.innerHeight/2
-			var x = (i/max_x_letters) * window.innerWidth - window.innerWidth/2
-			var y = (j/max_y_letters) * window.innerHeight - window.innerHeight/2
+			var x = (i/max_x_letters) * screen_width - screen_width/2
+			var y = (j/max_y_letters) * screen_height - screen_height/2
 			letter.setPosition(x,y)
 			introScreen.addChild(letter.getStructure().sprite);
 			introScreen.addChild(letter.getStructure().sprite2);
@@ -178,6 +178,8 @@ function addAnimations()
 				if (elapsed*application.ticker.deltaMS > timeout_for_server_response_ticks) ShowButtons("Timeout waiting for connection.")
 				if (CONNECT.is_user_profile_received()) ShowButtons("User profile received")
 			}
+			buttonWithYpsilon.animate(elapsed)
+			buttonWithoutYpsilon.animate(elapsed)
 	})
 	ticker=true
 }

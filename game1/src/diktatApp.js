@@ -13,14 +13,15 @@ import * as CONNECT from './libs/connect'
 
 var user_profile // struktura, ktora je naparsovana zo serveru z odpovede na SERVER.send_request_for_user_profile_from_server
 
-// hlavni aplikacni objekt
+// Create the PIXI application and attach it to the container
 let diktatApp = new PIXI.Application({
-	resizeTo: window,
-	antialias: true, // graphics RoundRectangle/drawRoundedRect
-	width: window.innerWidth,
-	height: window.innerHeight,
-	backgroundColor: 0xe0e0e0,
-	forceCanvas: true
+	//resizeTo: window,
+    antialias: true,
+    //width: container.clientWidth, // Set the width of the canvas to the container's width
+    //height: container.clientHeight, // Set the height of the canvas to the container's height
+	//height: 200,
+    backgroundColor: 0xe0e0e0,
+    forceCanvas: true
 });
 
 // spracovanie parametrov z URL
@@ -32,24 +33,39 @@ let diktatApp = new PIXI.Application({
 	if ('ano' == survey_only) PHASES.setSimpleSurveyMode(true)
 }
 
-window.innerHeight = window.innerHeight*0.95 // docasna kompenzacia dolneho bieleho pruhu
-
 window.onresize = function (event){
-	var w = window.innerWidth;
-	var h = window.innerHeight;
-	//console.log("window.onresize: " + w + "," + h);
+	windowSizeChanged()
 }
 
-function windowSizeChanged(w,h)
+document.addEventListener('DOMContentLoaded', () => {
+	windowSizeChanged();
+	// spusti hru
+	CONNECT.send_request_for_user_profile_from_server()
+	addPollers()
+	TEXT.calculateSentencesHash()
+	SCREEN_INTRO.initialize(diktatApp)
+	goPhase(PHASES.PHASE_INTRO_SCREEN)
+	//goPhase(PHASES.PHASE_ENTERING_PLAYER_INFO)
+	//goPhase(PHASES.PHASE_ENTERING_LETTERS)
+})
+
+function windowSizeChanged()
 {
+	// zisti rodicovski element
+	const container = document.getElementById('display');
+	// vipnutie HTML flex
+	container.style.display = "block"
+	var w = container.clientWidth
+	var h = container.clientHeight
+	
+	console.log("diktatApp:windowSizeChanged: " + w + "," + h);
+	diktatApp.renderer.resize(w,h);
 	// viber medzi horizontalnim a vertikalnim rozlozenim, potrebne pre mobili
 	var horizontal=false
 	if (h<w*0.8) horizontal=true
 	SCREEN_INTRO.windowSizeChanged(w,h,horizontal)
 	SCREEN_DIKTAT.windowSizeChanged(w,h,horizontal)
 }
-
-windowSizeChanged(window.innerWidth, window.innerHeight);
 
 function goPhase(new_phase)
 {
@@ -58,7 +74,6 @@ function goPhase(new_phase)
 	switch (PHASES.phase)
 	{
 		case PHASES.PHASE_INTRO_SCREEN:
-			SCREEN_INTRO.initialize(diktatApp)
 			SCREEN_INTRO.showScreen()
 			SCREEN_INTRO.buttonWithYpsilon.addEventListeners(
 				['mousedown', 'tap'], buttonStartWithYpsilonClicked)
@@ -141,14 +156,6 @@ function goPhase(new_phase)
 			SCREEN_PLAYER_INFO.showScreen()
 	}
 }
-
-// spusti hru
-CONNECT.send_request_for_user_profile_from_server()
-addPollers()
-TEXT.calculateSentencesHash()
-goPhase(PHASES.PHASE_INTRO_SCREEN)
-//goPhase(PHASES.PHASE_ENTERING_PLAYER_INFO)
-//goPhase(PHASES.PHASE_ENTERING_LETTERS)
 
 var app_elapsed_time=0
 function addPollers()

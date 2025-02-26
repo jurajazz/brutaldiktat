@@ -17,14 +17,17 @@ export function initialize(app)
 	application = app
 
 	gameScreen = new PIXI.Container();
-	gameScreen.position.set(window.innerWidth / 2, window.innerHeight / 2)
+	const container = document.getElementById('display');
+	var screen_width = container.clientWidth
+	var screen_height = container.clientHeight
+	gameScreen.position.set(screen_width / 2, screen_height / 2)
 	application.stage.addChild(gameScreen)
 
 }
 
 export function showScreen()
 {
-	let y = -window.innerHeight / 2 + 40
+	let y = -screen_height / 2 + 40
 	const label1 = new PIXI.Text('Diktátik',
 		{
 			fontFamily: STYLES.fontFamily,
@@ -48,8 +51,9 @@ export function showScreen()
 	label2.x = -label2.width / 2 // center
 	gameScreen.addChild(label2);
 
+	const container = document.getElementById('display');
 	let okButton = new TextButton("OK",
-		window.innerWidth * 0.1, window.innerHeight * 0.1,
+		container.clientWidth * 0.1, container.clientHeight * 0.1,
 		0, y + 500)
 	okButton.addEventListeners(['mousedown', 'tap'], buttonOkClicked)
 	gameScreen.addChild(okButton)

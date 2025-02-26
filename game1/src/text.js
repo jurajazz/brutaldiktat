@@ -173,9 +173,9 @@ export function placeLetters(wordListJoined,letters,textContainer,font_size)
 	let line_size_y=font_size*1.3
 	let leftx=-textContainer.width*0.45
 	let rightx=textContainer.width*0.45
-	let bottomy=textContainer.height*0.45
+	let bottomy=textContainer.height*0.4
 	let basex=leftx
-	let basey=-textContainer.position.y/2+font_size*0.5
+	let basey=-textContainer.position.y/2+font_size*0.4
 	let index=0;
 	let width_scale=0.9
 	for (let i = 0; i < wordListJoined.length; i++)
