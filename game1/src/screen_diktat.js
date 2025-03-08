@@ -45,6 +45,7 @@ export function windowSizeChanged(w,h,horizontal)
 	screen_width = w
 	screen_height = h
 	console.log("screen_diktat.windowSizeChanged: " + screen_width + "," + screen_height);
+	STRESSBAR.windowSizeChanged(w,h,horizontal)
 }
 
 export function initialize(app)

@@ -3,11 +3,18 @@ import * as STYLES from '../styles'
 import * as PHASES from '../phases.js'
 import * as TEXT from '../text.js'
 
-const container = document.getElementById('display');
-var screen_width = container.clientWidth
-var screen_height = container.clientHeight
+var screen_width = 0
+var screen_height = 0
 var horizontal_mode=false
 var gameScreen=null
+
+export function windowSizeChanged(w,h,horizontal)
+{
+	horizontal_mode = horizontal
+	screen_width = w
+	screen_height = h
+	console.log("stressbar.windowSizeChanged: " + screen_width + "," + screen_height);
+}
 
 export function set_horizontal_mode(mode)
 {
@@ -86,6 +93,7 @@ export function show() // v pripade prieskumu: progressBar
 	}
 	progress_ypos = -screen_height*0.5 + screen_height*0.12
 	var fontsize = screen_height*0.05
+	if (fontsize<2) fontsize=2
 	if (!horizontal_mode)
 	{
 		progress_ypos = -screen_height*0.5 + screen_height*0.17
