@@ -53,7 +53,7 @@ export function showScreen()
 	var fontsize_small = screen_height*0.1
 	let ypos_big = -screen_height*0.5+screen_height*0.2
 	let ypos_small = ypos_big+fontsize_big*1.5
-	var text_big = 'DiktátikV17'
+	var text_big = 'Diktátik'
 	var text_small = 'Vyskúšajte, aké je písanie'
 	if (!horizontal_mode)
 	{
