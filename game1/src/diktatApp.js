@@ -14,12 +14,10 @@ import * as CONNECT from './libs/connect'
 var user_profile // struktura, ktora je naparsovana zo serveru z odpovede na SERVER.send_request_for_user_profile_from_server
 
 // Create the PIXI application and attach it to the container
+const container = document.getElementById('display');
 let diktatApp = new PIXI.Application({
-	//resizeTo: window,
+	resizeTo: container,
     antialias: true,
-    //width: container.clientWidth, // Set the width of the canvas to the container's width
-    //height: container.clientHeight, // Set the height of the canvas to the container's height
-	//height: 200,
     backgroundColor: 0xe0e0e0,
     forceCanvas: true
 });
@@ -53,13 +51,19 @@ function windowSizeChanged()
 {
 	// zisti rodicovski element
 	const container = document.getElementById('display');
-	// vipnutie HTML flex
-	container.style.display = "block"
-	var w = container.clientWidth
+	
+	// vipnutie HTML flex - uz nie je potrebne, lebo bolo odstranene z CSS
+	//container.style.display = "block"
+	var w = container.clientWidth 
 	var h = container.clientHeight
 	
 	console.log("diktatApp:windowSizeChanged: " + w + "," + h);
 	diktatApp.renderer.resize(w,h);
+	
+	// pre mobil - abi bolo mozne skrolovat pomocou dotiku, zakazanie odchitavania posuvania
+	diktatApp.renderer.plugins.interaction.autoPreventDefault = false
+	diktatApp.renderer.view.style.touchAction = 'auto';
+	
 	// viber medzi horizontalnim a vertikalnim rozlozenim, potrebne pre mobili
 	var horizontal=false
 	if (h<w*0.8) horizontal=true
