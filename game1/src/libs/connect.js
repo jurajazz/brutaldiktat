@@ -55,7 +55,7 @@ export function runningLocally()
 export function post(action,data,hash)
 {
 	var xhr = new XMLHttpRequest();
-	var server_url = "/brutaldiktat/stat.php"
+	var server_url = "https://ypsilon.sk/brutaldiktat/stat.php"
 	// var server_url = "http://localhost:8080/stat.php"
 	xhr.open("POST", server_url, true);
 	xhr.setRequestHeader('Content-Type', 'application/json');
@@ -74,14 +74,14 @@ export function send_request_for_user_profile_from_server()
 		return
 	}
 	var xhr = new XMLHttpRequest();
-	var server_url = "/brutaldiktat/stat.php?action=get_user_profile&user_id="+get_user_id()
+	var server_url = "https://ypsilon.sk/brutaldiktat/stat.php?action=get_user_profile&user_id="+get_user_id()
 	xhr.onreadystatechange = function()
 	{
 		if (this.readyState == 4 && this.status == 200)
 		{
 			// Typical action to be performed when the document is ready:
 			user_profile_data_json = xhr.responseText
-			console.log("UserProfile:"+user_profile_data_json)
+			//console.log("UserProfile:"+user_profile_data_json)
 			user_profile_received = true
 		}
 	};
