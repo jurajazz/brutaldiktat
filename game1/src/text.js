@@ -41,10 +41,25 @@ function pickRandomSentence()
 	return diktatData.data.veti[Math.floor(Math.random() * diktatData.data.veti.length)]
 }
 
-function pickUnusedSentence()
+function pickUnusedSentence(selectedDifficulty)
 {
+	let sentences = diktatData.data.veti;
+	if (selectedDifficulty) {
+		const levelMap = {
+			'Easy': 1,
+			'Medium': 2,
+			'Hard': 3
+		};
+		const targetLevel = levelMap[selectedDifficulty];
+
+		sentences = sentences.filter(sentence => {
+			const sentenceLevel = sentence.level === undefined ? 3 : sentence.level;
+			return sentenceLevel === targetLevel;
+		});
+	}
+
 	var non_used_found=0
-	diktatData.data.veti.forEach
+	sentences.forEach
 	(
 		(item) =>
 		{
@@ -61,7 +76,7 @@ function pickUnusedSentence()
 	if (non_used_found>0)
 	{
 		var id = Math.floor(Math.random() * non_used_found)
-		last_sentence_picked = diktatData.data.veti[id]
+		last_sentence_picked = sentences[id]
 	}
 	else
 	{
@@ -116,11 +131,11 @@ export function markSentencesFilledByProfile(user_profile)
 	console.log("SentencesFilledBefore:"+sentences_filled_count)
 }
 
-export function generateNewText(user_profile)
+export function generateNewText(user_profile, selectedDifficulty)
 {
 	// generovanie zoznamu slov
 	const wordList = []
-	let selectedData = pickUnusedSentence()
+	let selectedData = pickUnusedSentence(selectedDifficulty)
 	var selectedSentence = selectedData['veta']
 	//console.log("generateNewText"+selectedSentence)
 	wordList.push(selectedSentence)

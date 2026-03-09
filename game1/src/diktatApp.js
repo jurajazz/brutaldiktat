@@ -13,6 +13,13 @@ import * as CONNECT from './libs/connect'
 
 var user_profile // struktura, ktora je naparsovana zo serveru z odpovede na SERVER.send_request_for_user_profile_from_server
 
+const DIFFICULTY = {
+	EASY: 'Easy',
+	MEDIUM: 'Medium',
+	HARD: 'Hard'
+}
+let selectedDifficulty = null;
+
 // Create the PIXI application and attach it to the container
 const container = document.getElementById('display');
 let diktatApp = new PIXI.Application({
@@ -83,6 +90,12 @@ function goPhase(new_phase)
 				['mousedown', 'tap'], buttonStartWithYpsilonClicked)
 			SCREEN_INTRO.buttonWithoutYpsilon.addEventListeners(
 				['mousedown', 'tap'], buttonStartWithoutYpsilonClicked)
+			SCREEN_INTRO.buttonEasy.addEventListeners(
+				['mousedown', 'tap'], () => buttonDifficultyClicked(DIFFICULTY.EASY))
+			SCREEN_INTRO.buttonMedium.addEventListeners(
+				['mousedown', 'tap'], () => buttonDifficultyClicked(DIFFICULTY.MEDIUM))
+			SCREEN_INTRO.buttonHard.addEventListeners(
+				['mousedown', 'tap'], () => buttonDifficultyClicked(DIFFICULTY.HARD))
 			break
 		case PHASES.PHASE_ENTERING_LETTERS:
 			SCREEN_INTRO.hide()
@@ -93,7 +106,7 @@ function goPhase(new_phase)
 			console.log("User Profile:"+user_profile)
 			if (SCREEN_DIKTAT.getWords() == '' || !TEXT.is_new_orthography)
 			{
-				SCREEN_DIKTAT.generateNewText(user_profile)
+				SCREEN_DIKTAT.generateNewText(user_profile, selectedDifficulty)
 			}
 			SCREEN_DIKTAT.showGameScreen()
 			SCREEN_DIKTAT.buttonNextPhase.addEventListeners(
@@ -190,6 +203,28 @@ function addPollers()
 				break;
 		}
 	})
+}
+
+function buttonDifficultyClicked(difficulty) {
+    selectedDifficulty = difficulty;
+    
+    const buttons = {
+        [DIFFICULTY.EASY]: SCREEN_INTRO.buttonEasy,
+        [DIFFICULTY.MEDIUM]: SCREEN_INTRO.buttonMedium,
+        [DIFFICULTY.HARD]: SCREEN_INTRO.buttonHard
+    };
+
+    for (const diff in buttons) {
+        if (diff === difficulty) {
+            buttons[diff].setBackgroundColor(0x909090); // Highlight color
+            buttons[diff].visible = true; // Ensure selected is visible
+        } else {
+            buttons[diff].visible = false; // Hide others
+        }
+    }
+
+    SCREEN_INTRO.buttonWithYpsilon.visible = true;
+    SCREEN_INTRO.buttonWithoutYpsilon.visible = true;
 }
 
 function buttonStartWithYpsilonClicked()

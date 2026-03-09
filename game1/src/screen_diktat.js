@@ -544,10 +544,10 @@ function cursorGotoPreviousPosition()
 
 var wordListJoined=''
 
-export function generateNewText(user_profile)
+export function generateNewText(user_profile, selectedDifficulty)
 {
 	// generovanie textu
-	var wordListChallenge = TEXT.generateNewText(user_profile)
+	var wordListChallenge = TEXT.generateNewText(user_profile, selectedDifficulty)
 	wordListJoined = wordListChallenge.join(', ')
 	console.log("generateNewText: "+wordListJoined)
 }

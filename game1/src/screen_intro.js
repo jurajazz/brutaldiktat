@@ -88,6 +88,9 @@ export function showScreen()
 
 export let buttonWithYpsilon = null
 export let buttonWithoutYpsilon = null
+export let buttonEasy = null
+export let buttonMedium = null
+export let buttonHard = null
 
 function showButtons()
 {
@@ -106,6 +109,13 @@ function showButtons()
 		buttonWithoutYpsilon = new TextButton(text_bez_y,
 		    buttonWidth, buttonHeight,
 		    +buttonWidth*0.9, y, fontsize)
+		
+		let difficultyButtonY = -buttonHeight * 1.7
+		let difficultyButtonDist = screen_width * 1 / (4 + 1)
+		let difficultyButtonWidth = screen_width * 1 / (5 + 1)
+		buttonEasy = new TextButton("Ľahký", difficultyButtonWidth, buttonHeight, -difficultyButtonDist, difficultyButtonY, fontsize)
+		buttonMedium = new TextButton("Stredný", difficultyButtonWidth, buttonHeight, 0, difficultyButtonY, fontsize)
+		buttonHard = new TextButton("Ťažký", difficultyButtonWidth, buttonHeight, difficultyButtonDist, difficultyButtonY, fontsize)
 	}
 	else
 	{
@@ -118,6 +128,13 @@ function showButtons()
 		buttonWithoutYpsilon = new TextButton(text_bez_y,
 		    buttonWidth, buttonHeight,
 		    0, y+buttonHeight+0.33*buttonHeight, fontsize)
+
+		let difficultyButtonY = -buttonHeight * 1
+		let difficultyButtonDist = screen_width * 0.33
+		let difficultyButtonWidth = screen_width * 0.30
+		buttonEasy = new TextButton("Ľahký", difficultyButtonWidth, buttonHeight, -difficultyButtonDist, difficultyButtonY, fontsize)
+		buttonMedium = new TextButton("Stredný", difficultyButtonWidth, buttonHeight, 0, difficultyButtonY, fontsize)
+		buttonHard = new TextButton("Ťažký", difficultyButtonWidth, buttonHeight, difficultyButtonDist, difficultyButtonY, fontsize)
 	}
 	// kim nie je zo servera odpoved, alebo timeout - ziadne tlacitka sa nezobrazia
 	// zobrazia sa az po odpovedi zo serveru alebo timeoute
@@ -179,6 +196,9 @@ function addAnimations()
 			}
 			buttonWithYpsilon.animate(elapsed)
 			buttonWithoutYpsilon.animate(elapsed)
+			if(buttonEasy) buttonEasy.animate(elapsed)
+			if(buttonMedium) buttonMedium.animate(elapsed)
+			if(buttonHard) buttonHard.animate(elapsed)
 	})
 	ticker=true
 }
@@ -187,8 +207,13 @@ function ShowButtons(reason)
 {
 	console.log('Show Buttons: '+reason)
 	buttons_shown = true
+	introScreen.addChild(buttonEasy)
+	introScreen.addChild(buttonMedium)
+	introScreen.addChild(buttonHard)
 	introScreen.addChild(buttonWithYpsilon)
 	introScreen.addChild(buttonWithoutYpsilon)
+	buttonWithYpsilon.visible = false
+	buttonWithoutYpsilon.visible = false
 }
 
 function animateLetter(letter) { letter.animate(elapsed) }
