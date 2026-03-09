@@ -1,5 +1,53 @@
 data:
   veti:
+    - veta: Vtipní ľudia sa smiali na vtipoch.
+      level: 1
+    - veta: Skúsený učiteľ vysvetlí pravidlo.
+      level: 1
+    - veta: Usilovní študenti študujú každý deň.
+      level: 1
+    - veta: Na dvore sme videli vysokú byľ pri plote.
+      level: 1
+    - veta: Mama vyprala záclony a zavesila ich do obývačky.
+      level: 1
+    - veta: Po búrke sa pri potoku objavili malé ryby.
+      level: 1
+    - veta: Zo starej pivnice bolo cítiť zvláštny zápach.
+      level: 1
+    - veta: Turisti vystúpili na vysoký vrch ešte pred obedom.
+      level: 1
+    - veta: Chlapec si vymyslel zaujímavý príbeh o sokolovi.
+      level: 1
+    - veta: V lese sme počuli vytie vlka a šuchot lístia.
+      level: 1
+    - veta: Otec vyrábal poličku, kým brat zbieral klince.
+      level: 1
+    - veta: Na lúke rástli bylinky a poletovali nad nimi motýle.
+      level: 1
+    - veta: Pred pretekmi si športovec vydýchol a vyrazil na trať.
+      level: 1
+    - veta: Na oslavu si pozval ôsmich kamarátov.
+      level: 2
+    - veta: Na stole zostal malý omrvinkový mišmaš.
+      level: 2
+    - veta: Po ceste si vykračovali dvaja unavení pytliaci.
+      level: 2
+    - veta: V knižnici sme hľadali encyklopédiu o starom Egypte.
+      level: 2
+    - veta: Turisti vystúpili na horský svah a pozorovali rysa.
+      level: 2
+    - veta: Novinár napísal zaujímavý článok o ôsmich kryštáloch a mineráloch.
+      level: 2
+    - veta: Novinár popísal ako tvoríme urážlivé cynizmy.
+      level: 2
+    - veta: Na kúpaliskách predávajú pečené cukiny a ženy nosia bikiny.
+      level: 2
+    - veta: Žiaci si opakovali výnimky, synonymá, výslovnosť a význam cudzích slov.
+      level: 2
+    - veta: Oslava ôsmych narodenín bola výnimočná.
+      level: 2
+    - veta: Muzikant vie hrať na siedmich nástrojoch.
+      level: 2
     - veta: S kolegyninými synmi sme pri krištáľovom potoku vyzerali visiacich, kývajúcich sa krivých Katkiných a otcových výnimočných okrídlených partizánov.
       pomoc:
       - slovo: kolegyninými
